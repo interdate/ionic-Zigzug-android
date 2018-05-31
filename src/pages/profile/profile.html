@@ -1,0 +1,252 @@
+<!--
+  Generated template for the ProfilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+  </ion-navbar>
+</ion-header>
+
+<div *ngIf="myId != user.id" class="profile-buttons">
+  <div *ngIf="user.isOnline == '1'" class="online"></div>
+  <div (click)="toDialog(user)" class="message-profile-btn"><img src="assets/img/icons/pmsgbot.png"></div>
+  <div *ngIf="user.isAddLike == '0'" (click)="addLike(user)" class="like-profile-btn"><img
+          src="assets/img/icons/plike.png"></div>
+  <div *ngIf="user.isAddLike == '1'" class="disabled like-profile-btn"><img src="assets/img/icons/plike.png">
+  </div>
+  <div *ngIf="user.isAddFavorite == '0' && user.id " (click)="addFavorites(user)"
+       class="favorite-profile-btn">
+    <img src="assets/img/icons/padd.png"></div>
+  <div *ngIf="user.isAddFavorite == '1'" class="disabled favorite-profile-btn"><img
+          src="assets/img/icons/padd.png"></div>
+</div>
+<ion-content>
+
+  <div>
+    <div *ngIf="user.isOnline == '1'" class="online"></div>
+
+    <div class="photos" [ngStyle]="{ 'direction': 'ltr'}">
+      <ion-slides pager="true">
+        <ion-slide  *ngFor="let usr of photos; let i = index">
+          <div (click)="fullPagePhotos(i)" [ngStyle]="{ 'background-image': 'url('+ usr.url.replace('w_600','w_400') + ')'}"
+               class="avatar"></div>
+        </ion-slide>
+      </ion-slides>
+    </div>
+    <div class="content">
+      <div class="pmtitle">
+        <div *ngIf="user.isPaying == 1" class="paying"></div>
+        <div *ngIf="user.isNew == '1'" class="new-user"></div>
+        <div *ngIf="user.isOnline == '1'" class="online-user"></div>
+        <strong> {{user.userNick}}, </strong><span class="age"> {{user.age}} </span>
+        <span>{{user.city}}</span> <!--region_name-->
+      </div>
+
+      <div class="pmdetail cf">
+        <ul padding class="pmbotul"> <!--[ngClass]="{'bg-loader': !user.iam}"-->
+          <!--<ion-spinner class="bg" *ngIf="!user.iam"></ion-spinner>-->
+          <div class="profile-sub-title">אני בקצרה</div>
+          <li *ngIf="user.relationshipStatus?.value"><span
+                  class="one">{{user.relationshipStatus?.label }}</span><span
+                  class="two">{{user.relationshipStatus?.value }}</span></li>
+
+          <li *ngIf="user.children?.value"><span class="one">{{user.children?.label }}</span>
+            <span class="two">{{user.children?.value }}</span>
+          </li>
+
+          <li *ngIf="user.sexPreference?.value"><span class="one">{{user.sexPreference?.label }}</span>
+            <span class="two">{{user.sexPreference?.value }}</span>
+          </li>
+
+          <li *ngIf="user.selfdef?.value"><span class="one">{{user.selfdef?.label }}</span>
+            <span class="two">{{user.selfdef?.value }}</span>
+          </li>
+
+          <li *ngIf="user.closet?.value"><span class="one">{{user.closet?.label }}</span>
+            <span class="two">{{user.closet?.value }}</span>
+          </li>
+
+          <li *ngIf="user.experience?.value"><span class="one">{{user.experience?.label }}</span>
+            <span class="two">{{user.experience?.value }}</span>
+          </li>
+
+          <li *ngIf="user.zodiac?.value"><span class="one">{{user.zodiac?.label }}</span>
+            <span class="two">{{user.zodiac?.value }}</span>
+          </li>
+
+          <li *ngIf="user.smoking?.value"><span class="one">{{user.smoking?.label }}</span>
+            <span class="two">{{user.smoking?.value }}</span>
+          </li>
+
+          <li *ngIf="user.purposes?.value"><span class="one">{{user.purposes?.label }}</span><span
+                  class="two">{{user.purposes?.value }}</span>
+          </li>
+
+
+          <div class="profile-sub-title">אני בהרחבה</div>
+          <!--<li *ngIf="user.iam?.value"><span
+                  class="one">{{user.iam?.label }}</span><span
+                  class="two">{{user.iam?.value }}</span></li>-->
+          <!-- <li *ngIf="user.type?.value"><span class="one">{{user.type?.label }}</span><span class="two">{{user.type?.value }}</span>
+          <li *ngIf="user.veggieReasons?.value"><span class="one">{{user.veggieReasons?.label }}</span><span
+                  class="two">{{user.veggieReasons?.value }}</span>
+          </li>
+          <li *ngIf="user.drinking?.value"><span class="one">{{user.drinking?.label }}</span><span
+                  class="two">{{user.drinking?.value }}</span>
+          </li>
+          <li *ngIf="user.sport?.value"><span class="one">{{user.sport?.label }}</span><span class="two">{{user.sport?.value }}</span>
+          </li>
+          <li *ngIf="user.green?.value"><span class="one">{{user.green?.label }}</span><span class="two">{{user.green?.value }}</span>
+          </li>
+          <li *ngIf="user.animals?.value"><span class="one">{{user.animals?.label }}</span><span class="two">{{user.animals?.value }}</span>
+          </li>-->
+
+          <li *ngIf="user.occupation?.value"><span class="one">{{user.occupation?.label }}</span><span
+                  class="two">{{user.occupation?.value }}</span>
+          </li>
+
+
+          <li *ngIf="user.economy?.value"><span class="one">{{user.economy?.label }}</span><span
+                  class="two">{{user.economy?.value }}</span>
+          </li>
+
+
+          <li *ngIf="user.education?.value"><span class="one">{{user.education?.label }}</span><span
+                  class="two">{{user.education?.value }}</span>
+          </li>
+
+          <li *ngIf="user.religion?.value"><span class="one">{{user.religion?.label }}</span><span
+                  class="two">{{user.religion?.value }}</span>
+          </li>
+
+          <li *ngIf="user.religion2?.value"><span class="one">{{user.religion2?.label }}</span><span
+                  class="two">{{user.religion2?.value }}</span>
+          </li>
+
+          <li *ngIf="user.drinking?.value"><span class="one">{{user.drinking?.label }}</span>
+            <span class="two">{{user.drinking?.value }}</span>
+          </li>
+
+          <li *ngIf="user.sport?.value"><span class="one">{{user.sport?.label }}</span>
+            <span class="two">{{user.sport?.value }}</span>
+          </li>
+
+          <li *ngIf="user.food?.value"><span class="one">{{user.food?.label }}</span>
+            <span class="two">{{user.food?.value }}</span>
+          </li>
+
+          <li *ngIf="user.animals?.value"><span class="one">{{user.animals?.label }}</span>
+            <span class="two">{{user.animals?.value }}</span>
+          </li>
+
+          <li *ngIf="user.interests?.value"><span class="one">{{user.interests?.label }}</span>
+            <span class="two">{{user.interests?.value }}</span>
+          </li>
+
+
+          <!-- <li *ngIf="user.politicalAffiliation?.value"><span
+                   class="one">{{user.politicalAffiliation?.label }}</span><span class="two">{{user.politicalAffiliation?.value }}</span>
+           </li> -->
+
+          <div class="profile-sub-title">איך אני נראית</div>
+
+          <li *ngIf="user.height?.value"><span class="one">{{user.height?.label }}</span>
+            <span class="two">{{user.height?.value }}</span>
+          </li>
+
+          <li *ngIf="user.body?.value"><span class="one">{{user.body?.label }}</span>
+            <span class="two">{{user.body?.value }}</span>
+          </li>
+
+          <li *ngIf="user.eyes?.value"><span class="one">{{user.eyes?.label }}</span>
+            <span class="two">{{user.eyes?.value }}</span>
+          </li>
+
+          <li *ngIf="user.hairColor?.value"><span class="one">{{user.hairColor?.label }}</span>
+            <span class="two">{{user.hairColor?.value }}</span>
+          </li>
+
+          <li *ngIf="user.hairStyle?.value"><span class="one">{{user.hairStyle?.label }}</span>
+            <span class="two">{{user.hairStyle?.value }}</span>
+          </li>
+
+
+          <div *ngIf="user.about?.value" class="profile-sub-title">{{user.about?.label }}</div>
+          <li *ngIf="user.about?.value">
+            <span id="user-about" class="three">{{setHtml('user-about',user.about?.value) }}</span>
+          </li>
+
+          <div class="profile-sub-title">{{user.lookingFor?.label }}</div>
+          <li *ngIf="user.lookingFor?.value">
+            <span id="user-lookingFor">{{ setHtml('user-lookingFor',user.lookingFor?.value )}}</span>
+          </li>
+
+
+          <!--<div *ngIf="user.perfectdate?.value || user.dish?.value || user.restaurant?.value || user.dinner?.value || user.books?.value || user.music?.value"
+               class="profile-sub-title">עוד קצת עליי
+          </div>
+          <li *ngIf="user.perfectdate?.value"><span class="one">{{user.perfectdate?.label }}</span><span
+                  class="two">{{user.perfectdate?.value }}</span>
+          </li>
+          <li *ngIf="user.dish?.value"><span class="one">{{user.dish?.label }}</span><span class="two">{{user.dish?.value }}</span>
+          </li>
+          <li *ngIf="user.restaurant?.value"><span class="one">{{user.restaurant?.label }}</span><span
+                  class="two">{{user.restaurant?.value }}</span>
+          </li>
+          <li *ngIf="user.dinner?.value"><span class="one">{{user.dinner?.label }}</span><span class="two">{{user.dinner?.value }}</span>
+          </li>
+          <li *ngIf="user.books?.value"><span class="one">{{user.books?.label }}</span><span class="two">{{user.books?.value }}</span>
+          </li>
+          <li *ngIf="user.music?.value"><span class="one">{{user.music?.label }}</span><span class="two">{{user.music?.value }}</span>
+          </li>-->
+
+        </ul>
+
+      </div>
+      <div *ngIf="myId != user.id && formReportAbuse?.title" class="pmtitle bottom">
+        <button (click)="reportAbuseShow()" color="dark" class="report-abuse" icon-left ion-button>
+          <ion-icon name="megaphone"></ion-icon>
+          {{ formReportAbuse?.title }}
+        </button>
+        <button *ngIf="user.isAddBlackListed == '0'" (click)="blockSubmit()" color="dark" class="report-abuse"
+                icon-left
+                ion-button>
+          <ion-icon name="lock"></ion-icon>
+          {{ texts?.lock }}
+        </button>
+        <button *ngIf="user.isAddBlackListed == '1'" (click)="blockSubmit()" color="dark" class="report-abuse"
+                icon-left
+                ion-button>
+          <ion-icon name="unlock"></ion-icon>
+          {{ texts?.unlock }}
+        </button>
+      </div>
+
+      <div *ngIf="isAbuseOpen" class="abuse-form">
+        <ion-item>
+          <ion-textarea [(ngModel)]="formReportAbuse.text.value" rows="3"></ion-textarea>
+        </ion-item>
+
+        <div class='btn-opt' padding>
+          <button class="cancel" color="danger" (click)="reportAbuseClose()" ion-button>{{
+            formReportAbuse.buttons.cancel }}
+          </button>
+          <button color="danger" (click)="abuseSubmit()" ion-button>{{ formReportAbuse.buttons.submit }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+<ion-footer>
+
+  <ion-navbar class="footerMenu">
+    <ion-title>settings</ion-title>
+  </ion-navbar>
+
+</ion-footer>

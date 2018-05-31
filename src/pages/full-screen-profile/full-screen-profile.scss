@@ -1,0 +1,36 @@
+page-full-screen-profile {
+  .content-md, .content-ios {
+    background-color: #000;
+    direction: ltr;
+  }
+  .close {
+    width: 21px;
+    height: 21px;
+    right: 23px;
+    top: 20px;
+    position: absolute;
+    z-index: 9999;
+  }
+
+  .close-warp {
+    width: 60px;
+    height: 57px;
+    right: 23px;
+    top: 20px;
+    position: absolute;
+    z-index: 9999;
+  }
+
+  .profile-buttons .favorite-profile-btn,
+  .profile-buttons .like-profile-btn,
+  .profile-buttons .message-profile-btn {
+    background: rgba(233,232,229,0.5);
+    width: 49px;
+    height: 49px;
+    margin-bottom: 5px;
+    border-radius: 50%;
+  }
+  ion-slides, ion-slides *{
+    direction: ltr;
+  }
+}

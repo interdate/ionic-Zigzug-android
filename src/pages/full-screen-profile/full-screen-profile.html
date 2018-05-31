@@ -1,0 +1,34 @@
+<!--
+  Generated template for the FullScreenProfilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>fullScreenProfile</ion-title>
+  </ion-navbar>
+
+</ion-header>
+<ion-content>
+  <div *ngIf="myId != user.id" class="profile-buttons">
+    <div (click)="toDialog(user)" class="message-profile-btn"><img src="assets/img/icons/pmsgbot.png"></div>
+    <div *ngIf="user.isAddLike == '0'" (click)="addLike(user)" class="like-profile-btn"><img
+            src="assets/img/icons/plike.png"></div>
+    <div *ngIf="user.isAddLike == '1'" class="disabled like-profile-btn"><img src="assets/img/icons/plike.png"></div>
+    <div *ngIf="user.isAddFavorite == '0' && user.id " (click)="addFavorites(user)"
+         class="favorite-profile-btn">
+      <img src="assets/img/icons/padd.png"></div>
+    <div *ngIf="user.isAddFavorite == '1'" class="disabled favorite-profile-btn"><img src="assets/img/icons/padd.png"></div>
+  </div>
+  <div class="close-warp" (click)="goBack()">
+    <div class="close"><img alt="close" src="assets/img/icons/psclose.png"></div>
+  </div>
+  <ion-slides initialSlide="{{i}}" [loop]="user.photos.length > 1">
+    <ion-slide *ngFor="let usr of user.photos">
+      <img src="{{ usr?.url }}">
+    </ion-slide>
+
+  </ion-slides>
+</ion-content>

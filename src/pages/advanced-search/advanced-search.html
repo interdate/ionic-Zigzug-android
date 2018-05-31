@@ -1,0 +1,213 @@
+<!--
+  Generated template for the AdvancedSearchPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>advanced-search</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div *ngIf="form">
+    <ion-item>
+      <ion-label>{{form.region.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.region.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.region.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>מגיל</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" item-content  [(ngModel)]="form?.age.valueFrom">
+        <ion-option value="{{child}}" *ngFor="let child of ages">{{child}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>עד גיל</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form.age.valueTo">
+        <ion-option value="{{child}}" *ngFor="let child of ages">{{child}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form?.relationship.label}}</ion-label>
+      <ion-select multiple="true" okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form?.relationship.value">
+        <ion-option value="{{child.value}}" *ngFor="let child of form?.relationship.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form?.hairLengthId.label}}</ion-label>
+      <ion-select multiple="true" okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form?.hairLengthId.value">
+        <ion-option value="{{child.value}}" *ngFor="let child of form?.hairLengthId.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form?.hairColor.label}}</ion-label>
+      <ion-select multiple="true" okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form?.hairColor.value">
+        <ion-option value="{{child.value}}" *ngFor="let child of form?.hairColor.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form?.eyesColor.label}}</ion-label>
+      <ion-select multiple="true" okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form?.eyesColor.value">
+        <ion-option value="{{child.value}}" *ngFor="let child of form?.eyesColor.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>מגובה</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form?.heightFrom.value">
+        <ion-option value="{{child}}" *ngFor="let child of height">{{child}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>עד גובה</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" item-content [(ngModel)]="form.heightTo.value">
+        <ion-option value="{{child}}" *ngFor="let child of height">{{child}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.body.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.body.value">
+        <ion-option value="{{ body_t.value }}" *ngFor="let body_t of form.body.choices">{{body_t.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.education.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.education.value">
+        <ion-option value="{{ educ.value }}" *ngFor="let educ of form.education.choices">{{educ.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.occupation.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.occupation.value">
+        <ion-option value="{{ occ_w.value }}" *ngFor="let occ_w of form.occupation.choices">{{occ_w.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.economy.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.economy.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.economy.choices">
+          {{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.maritalStatus.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.maritalStatus.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.maritalStatus.choices">
+          {{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.religion.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.religion.value">
+        <ion-option value="{{ religion.value }}" *ngFor="let religion of form.religion.choices">
+          {{religion.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.religion2.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.religion2.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.religion2.choices">
+          {{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.smoking.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.smoking.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.smoking.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.sexPref.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.sexPref.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.sexPref.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.food.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.food.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.food.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.sport.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.sport.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.sport.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.closet.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.closet.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.closet.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.defined.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.defined.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.defined.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.experience.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.experience.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.experience.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.userChildren.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.userChildren.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.userChildren.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="border-top">
+      <ion-label>{{form.animals.label}}</ion-label>
+      <ion-select okText="אישור" cancelText="ביטול" multiple="true" [(ngModel)]="form.animals.value">
+        <ion-option value="{{ child.value }}" *ngFor="let child of form.animals.choices">{{child.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item class="border-top">
+      <ion-label>{{ form.withPhotos.label }}</ion-label>
+      <ion-checkbox color="danger" item-right [(ngModel)]="form.withPhotos.value"></ion-checkbox>
+    </ion-item>
+
+
+    <button full color="danger" (click)=toSearchResultsPage() ion-button>{{ form.submit }}</button>
+  </div>
+</ion-content>
+<ion-footer>
+
+  <ion-navbar>
+    <ion-title></ion-title>
+  </ion-navbar>
+
+</ion-footer>

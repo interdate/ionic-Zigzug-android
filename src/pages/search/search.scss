@@ -1,0 +1,31 @@
+page-search {
+  .item-ios.item-block .item-inner {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .bteween {
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    padding: 0 5.4%;
+    line-height: 29px;
+  }
+
+  .btn-search{
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .adv-search {
+    background: #ffffff;
+    color: #ec649f;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  .select-text {
+    margin-top: 16px;
+  }
+}

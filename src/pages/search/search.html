@@ -1,0 +1,74 @@
+<!--
+  Generated template for the SearchPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item class="border-top">
+    <ion-label>{{ form.form.region.label }}</ion-label>
+    <ion-select okText="אישור" cancelText="ביטול" item-content name="area" multiple="true"
+                [(ngModel)]="form?.form?.region.value">
+      <ion-option value="{{area.value}}" *ngFor="let area of form.form.region.choices">{{area.label}}</ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item class="border-top">
+    <ion-label>מגיל</ion-label>
+    <ion-select okText="אישור" cancelText="ביטול" item-content name="area" [(ngModel)]="form?.form?.ageFrom.value">
+      <ion-option value="{{ageFrom.num}}" *ngFor="let ageFrom of ages">{{ageFrom.num}}
+      </ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item class="border-top">
+    <ion-label>עד גיל</ion-label>
+    <ion-select okText="אישור" cancelText="ביטול" item-content name="area" [(ngModel)]="form?.form?.ageTo.value">
+      <ion-option value="{{ageTo.num}}" *ngFor="let ageTo of ages">{{ageTo.num}}
+      </ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item class="border-top">
+    <ion-label>{{ form.form.SexPref.label }}</ion-label>
+    <ion-select okText="אישור" cancelText="ביטול" item-content name="area" multiple="true"
+                [(ngModel)]="form?.form?.SexPref.value">
+      <ion-option value="{{area.value}}" *ngFor="let area of form.form.SexPref.choices">{{area.label}}
+      </ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item class="border-top">
+    <ion-label>{{ form.form.MaritalStatus.label }}</ion-label>
+    <ion-select okText="אישור" cancelText="ביטול" item-content name="area" multiple="true"
+                [(ngModel)]="form?.form?.MaritalStatus.value">
+      <ion-option value="{{area.value}}" *ngFor="let area of form.form.MaritalStatus.choices">{{area.label}}
+      </ion-option>
+    </ion-select>
+  </ion-item>
+
+  <!--<button full color="danger" (click)="toSearchResultsPage('search-form-1')" class="search-1" ion-button>{{ form.form.submit }}</button>
+<div class="or">או</div>-->
+  <ion-item>
+    <ion-input [(ngModel)]="form?.form?.username.value" placeholder="{{ form?.form?.username.label }}:"
+               type="text"></ion-input>
+  </ion-item>
+
+  <button full class="btn-search" color="danger" (click)="toSearchResultsPage()" ion-button>{{ form?.form?.submit }}</button>
+
+  <div class="or">או</div>
+  <button class="adv-search" (click)="toAdvancedPage()" full ion-button>חיפוש מתקדם</button>
+
+</ion-content>
+<ion-footer>
+
+  <ion-navbar class="footerMenu">
+    <ion-title></ion-title>
+  </ion-navbar>
+
+</ion-footer>
