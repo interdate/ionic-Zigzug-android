@@ -218,25 +218,38 @@ export class HomePage {
 
     addFavorites(user) {
 
+        let params;
+        let url;
+
         if (user.isFav == false) {
             user.isFav = true;
 
-
-            let params = JSON.stringify({
+            params = JSON.stringify({
                 list: 'Favorite'
             });
 
-            this.api.http.post(this.api.url + '/user/managelists/favi/1/'+ user.id, params, this.api.setHeaders(true, this.username, this.password)).subscribe(data => {
-                let res: any = data;
-                let toast = this.toastCtrl.create({
-                    message: res.success,
-                    duration: 3000
-                });
+            url = this.api.url + '/user/managelists/favi/1/' + user.id;
 
-                toast.present();
-                this.events.publish('statistics:updated');
+        } else {
+            user.isFav = false;
+
+            params = JSON.stringify({
+                list: 'Unfavorite'
             });
+
+            url = this.api.url + '/user/managelists/favi/0/' + user.id;
         }
+
+        this.api.http.post(url, params, this.api.setHeaders(true, this.username, this.password)).subscribe(data => {
+            let res: any = data;
+            let toast = this.toastCtrl.create({
+                message: res.success,
+                duration: 3000
+            });
+
+            toast.present();
+            this.events.publish('statistics:updated');
+        });
     }
 
     sortBy() {
@@ -244,11 +257,11 @@ export class HomePage {
         console.log(JSON.stringify(this.params.searchparams));
 
         let params = JSON.stringify({
-            action: 'search',
+            action:  this.params.action,
             list: '',
             filter: this.filter,
             page: 1,
-            searchparams: {region: this.params.searchparams.region, agefrom: this.params.searchparams.agefrom, ageto: this.params.searchparams.ageto, sexpreef: this.params.searchparams.sexpreef, meritalstat: this.params.searchparams.meritalstat, userNick: this.params.searchparams.userNick}
+            searchparams: this.params.searchparams
 
         });
 
@@ -258,7 +271,7 @@ export class HomePage {
                 list: this.params.list,
                 filter: this.filter,
                 page: 1,
-                searchparams: {region: this.params.searchparams.region, agefrom: this.params.searchparams.agefrom, ageto: this.params.searchparams.ageto, sexpreef: this.params.searchparams.sexpreef, meritalstat: this.params.searchparams.meritalstat, userNick: this.params.searchparams.userNick}
+                searchparams: this.params.searchparams
             })
         }
 

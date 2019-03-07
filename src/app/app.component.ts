@@ -550,7 +550,7 @@ export class MyApp {
             if (page.list == 'online') {
                 params = JSON.stringify({
                     action: 'online',
-                    filter: 'new',
+                    filter: "lastActivity",
                     list: '',
                     page: 1,
                     searchparams: {region: '', agefrom: 0, ageto: 0, sexpreef: '', meritalstat: '', userNick: ''}
