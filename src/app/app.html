@@ -7,7 +7,7 @@
   </ion-navbar>
   <div tappable (click)="goBack()" class="back-btu-wrap">
     <div class="back-btn">
-      <ion-icon name="ios-arrow-forward-outline"></ion-icon>
+      <ion-icon name="ios-arrow-back"></ion-icon>
       <!--
       ios-arrow-back-outline
       -->
@@ -85,9 +85,10 @@
     </ion-list>
   </ion-content>
 </ion-menu>
+
 <!--<img style="display: none;" class="banner" src="/images/spedate1.gif">-->
 <a class="link-banner"  *ngIf="banner?.src != '.' && is_login" href="{{banner?.link}}" (click)="goTo();">
-  <img class="banner" src="{{'https://www.shedate.co.il/images/banners/' + banner?.src}}">"#"
+  <img class="banner" src="{{'https://www.zigzug.co.il/images/banners/' + banner?.src}}">"#"
 </a>
 <ion-footer *ngIf="is_login" (swipe)="swipeFooterMenu()">
   <!--<div *ngIf="new_message && new_message.is_not_sent_today == true" class="messageNotify">
@@ -111,16 +112,16 @@
         </li>
         <li class="{{menu_item_footer1._id}}" *ngFor="let menu_item_footer1 of menu_items_footer1"
             (click)="openPage(menu_item_footer1)"><span
-                *ngIf="is_login && menu_item_footer1?.count && menu_item_footer1.count != 0 " class="inbox_count">{{ menu_item_footer1.count }}</span>
+                *ngIf="is_login && menu_item_footer1?.count && menu_item_footer1.count != 0 " class="inbox_count" [ngClass]="{'fs10': menu_item_footer1.count > 99 }">{{ menu_item_footer1.count }}</span>
           <ion-icon name="{{menu_item_footer1.icon}}"></ion-icon>
           <img class="{{menu_item_footer1._id}}" src="{{menu_item_footer1.src_img}}">{{menu_item_footer1.title}}
         </li>
       </ul>
       <ul class="menu-two">
         <li *ngFor="let menu_item_footer2 of menu_items_footer2; let i = index"
-            (click)="openPage(menu_item_footer2)" [ngClass]="{'search-width': i == 3 }">
+            (click)="openPage(menu_item_footer2)" [ngClass]="{'search-width': i == 2 }" class="li{{i}}">
           <ion-icon name="{{menu_item_footer2.icon}}"></ion-icon>
-          <span *ngIf="is_login && menu_item_footer2?.count && menu_item_footer2.count != 0" class="inbox_count">{{ menu_item_footer2.count }}</span>
+          <span *ngIf="is_login && menu_item_footer2?.count && menu_item_footer2.count != 0" class="inbox_count" [ngClass]="{'fs10': menu_item_footer2.count > 99 }">{{ menu_item_footer2.count }}</span>
           <img class="{{menu_item_footer2._id}}" src="{{menu_item_footer2.src_img}}">{{menu_item_footer2.title}}
         </li>
       </ul>

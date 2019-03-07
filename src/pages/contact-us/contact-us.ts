@@ -21,7 +21,7 @@ export class ContactUsPage {
             username: {},
             subject: {'value' : '','label': 'נושא הפניה'},
             email: {'label': 'האימייל המעודכן שלי	',value:''},
-            submit: 'שלחי',
+            submit: 'שלח',
             text: {'label': 'הערות', value:''}
         }
     };

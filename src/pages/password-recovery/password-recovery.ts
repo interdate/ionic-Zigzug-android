@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import {ApiProvider} from "../../providers/api/api";
 
+
 /**
  * Generated class for the PasswordRecoveryPage page.
  *
@@ -16,7 +17,7 @@ import {ApiProvider} from "../../providers/api/api";
 })
 export class PasswordRecoveryPage {
 
-    form: { form: any } = {form: {email: { 'value': '', 'label': 'אימייל'}, submit: 'שלחי'}};
+    form: { form: any } = {form: {email: { 'value': '', 'label': 'אימייל'}, submit: 'שלח'}};
 
     email_err: any;
 

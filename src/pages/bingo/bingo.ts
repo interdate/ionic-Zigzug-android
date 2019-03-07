@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {ApiProvider} from "../../providers/api/api";
 import {DialogPage} from "../dialog/dialog";
 
@@ -22,15 +22,31 @@ export class BingoPage {
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
-        public api: ApiProvider
+        public api: ApiProvider,
+        public toastCtrl: ToastController
     ) {
         this.data = navParams.get('data');
         this.data.texts.text2 = this.data.texts.text2.replace('USERNAME',this.data.user.nickName);
     }
 
     toDialog() {
-        this.data.user.user_id = this.data.user.id;
-        this.navCtrl.push(DialogPage,{ user: this.data.user });
+        var mess = '';
+        if(this.data.user.isAllowedToSend == '1'){
+            mess = this.data.texts.chatErrorsMess[1];
+        }else if(this.data.user.isAllowedToSend == '2'){
+            mess = this.data.texts.chatErrorsMess[2];
+        }
+        if(mess == ''){
+            this.data.user.id = this.data.user.userId;
+            this.navCtrl.push(DialogPage,{ user: this.data.user });
+        }else{
+            let toast = this.toastCtrl.create({
+                message: mess,
+                duration: 5000
+            });
+            toast.present();
+        }
+
     }
 
     goBack() {

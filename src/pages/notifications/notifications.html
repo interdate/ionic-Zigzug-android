@@ -28,9 +28,9 @@
   <div [ngSwitch]="tabs">
     <div *ngSwitchCase="like">
       <div *ngFor="let user of users" >
-        <ion-card [ngClass]="{'grey': user.isRead == 1 }" (click)=toDialog(user) *ngIf="user.bingo == '0'">
+        <ion-card [ngClass]="{'grey': user.isRead == 1 }" (click)=toDialog(user) *ngIf="user.notificationId == '1'">
           <ion-card-content>
-            <div class="usr_img" [ngStyle]="{ 'background-image': 'url(' + user.imageUrl + ')'}"></div>
+            <div class="usr_img" [ngStyle]="{ 'background-image': 'url(' + (api.testingMode ? ('https://www.zigzug.co.il/images/users/large/' + user.gender + '.jpg') : user.imageUrl) + ')'}"></div>
             <ion-card-title>
               <div class="name">{{user.nickName}}</div>
               <div class="date">{{user.date}}</div>
@@ -38,15 +38,16 @@
             <p>
               {{user.template.replace('[UserNick]',user.nickName)}}
             </p>
+            <div *ngIf="user.bingo == '1'" class="bingoimg"><img alt="bingo" src="assets/img/bingo.png"></div>
           </ion-card-content>
         </ion-card>
       </div>
     </div>
     <div *ngSwitchCase="bingo">
       <div *ngFor="let user of users">
-        <ion-card [ngClass]="{'grey': user.isRead == 1 }" (click)=toDialog(user) *ngIf="user.bingo == '1'">
+        <ion-card [ngClass]="{'grey': user.isRead == 1 }" (click)=toDialog(user) *ngIf="user.notificationId == '2'">
           <ion-card-content>
-            <div class="usr_img" [ngStyle]="{ 'background-image': 'url(' + user.imageUrl + ')'}"></div>
+            <div class="usr_img" [ngStyle]="{ 'background-image': 'url(' + (api.testingMode ? ('https://www.zigzug.co.il/images/users/large/' + user.gender + '.jpg') : user.imageUrl) + ')'}"></div>
             <ion-card-title>
               <div class="name">{{user.nickName}}</div>
               <div class="date">{{user.date}}</div>

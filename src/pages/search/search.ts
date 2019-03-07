@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { ActionSheetController, IonicPage, NavController, NavParams } from 'ionic-angular';
 import {ApiProvider} from "../../providers/api/api";
 import {AdvancedSearchPage} from "../advanced-search/advanced-search";
 import {HomePage} from "../home/home";
+import {SelectPage} from "../select/select";
 
 /**
  * Generated class for the SearchPage page.
@@ -20,7 +21,6 @@ export class SearchPage {
 
     age: any;
     areas: Array<{ title: any }>;
-    ages: Array<{ num: number }> = [];
 
     type_search: any = "";
     form: { form: any } = {
@@ -29,8 +29,8 @@ export class SearchPage {
             region: { choices: [[]], value: '', label:''},
             ageFrom: {choices: [[]], label: '',value:''},
             ageTo: {choices: [[]], label: '',value:''},
-            MaritalStatus: {choices: [[]], label: '' ,value:''},
-            SexPref: {choices: [[]], label: '' ,value:''}
+            gender: {choices: [[]], label: '' ,value:''},
+            userLookingForGender: {choices: [[]], label: '' ,value:''}
         }
     };
 
@@ -39,17 +39,13 @@ export class SearchPage {
 
     default_range: any = { lower: this.ageLower, upper: this.ageUpper }
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public api:ApiProvider) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public api:ApiProvider, public actionSheetCtrl: ActionSheetController) {
         this.age = {
             'lower': this.form.form.ageFrom.value,
             'upper': this.form.form.ageTo.value
         };
 
-        for (let i = 18; i <= 65; i++) {
-            this.ages.push({num: i});
-        }
-
-        this.api.http.get( api.url + '/user/form/sreach/', api.setHeaders(true) ).subscribe(data => {
+        this.api.http.get( api.url + '/user/form/search/', api.setHeaders(true) ).subscribe(data => {
 
             this.form.form = data;
 
@@ -57,6 +53,38 @@ export class SearchPage {
             console.log("Oops!");
         });
     }
+
+    openSelect(field, index) {
+        if(typeof field == 'undefined'){
+            field = false;
+        }
+        //console.log(index);
+        let profileModal = this.api.modalCtrl.create(SelectPage, {data: field});
+        profileModal.present();
+
+        profileModal.onDidDismiss(data => {
+            if (data) {
+                console.log(JSON.stringify(data));
+                console.log(JSON.stringify(field));
+                //let choosedVal = data.value;
+                field["value"] = data.value;
+                //if(field.name.indexOf('userBirthday') == -1) {
+                field["valLabel"] = data.label;
+                // }else{
+                //     for(let i=0; i<3; i++){
+                //         if(field.name == this.form.fields[index]['sel'][i].name){
+                //             this.form.form[index]['sel'][i]['valLabel'] = data.label;
+                //         }
+                //     }
+                //
+                // }
+                //console.log(JSON.stringify(field));
+                this.form.form[index] = field;
+                console.log(JSON.stringify(this.form.form[index]));
+            }
+        });
+    }
+
 
     toSearchResultsPage(){
 
@@ -72,10 +100,11 @@ export class SearchPage {
                     region: this.form.form.region.value,
                     agefrom: this.form.form.ageFrom.value,
                     ageto: this.form.form.ageTo.value,
-                    sexpreef: this.form.form.SexPref.value,
-                    meritalstat: this.form.form.MaritalStatus.value,
+                    gender: this.form.form.gender.value,
+                    userLookingForGender: this.form.form.userLookingForGender.value,
                     userNick: ''},
                 page: 1,
+                usersCount: 20,
                 list: '',
                 filter: 'lastActivity'
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import {ApiProvider} from "../../providers/api/api";
 
 /**
  * Generated class for the SelectPage page.
@@ -17,17 +18,28 @@ export class SelectPage {
 
     data: any;
     options: any = [];
-    //page: any = 1;
-   //count: any = 30;
-    //opt_add:any = true;
+    viewEmpty: any;
 
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
-        public viewCtrl: ViewController
+        public viewCtrl: ViewController,
+        public api: ApiProvider
     ) {
         this.data = this.navParams.get('data');
-        this.options = this.data.choices;
+        console.log(this.data);
+        console.log(this.api.pageName);
+        this.viewEmpty = (this.api.pageName == 'RegisterPage') ? false : true;
+        if(!this.viewEmpty){
+            for(var i in this.data.choices){
+                var choice = this.data.choices[i];
+                if(choice.label !== '') {
+                    this.options.push(choice);
+                }
+            }
+        }else {
+            this.options = this.data.choices;
+        }
         //this.addOption();
     }
 

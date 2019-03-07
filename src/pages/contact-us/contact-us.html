@@ -30,8 +30,10 @@
   <div class="err">{{ subject_err }}</div>
 
   <div class="text">
-    <ion-textarea [(ngModel)]="form.form.text.value" rows="8"
+    <ion-item>
+      <ion-textarea [(ngModel)]="form.form.text.value" rows="8"
                   placeholder="{{ form.form.text.label }}"></ion-textarea>
+    </ion-item>
   </div>
   <div class="err">{{ text_err }}</div>
   <div *ngIf="allfields  && allfields?.length != 0" class="err">{{ allfields }}</div>

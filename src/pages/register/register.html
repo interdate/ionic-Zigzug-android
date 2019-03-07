@@ -34,7 +34,7 @@
   </div>
 
   <div class="msg" *ngIf="user?.register">{{form?.text?.msg}}</div>
-  <div class="formdiv cf" *ngIf="user?.step < 4">
+  <div class="formdiv cf" *ngIf="user?.step < 3">
     <div *ngIf="errors && errors?.length != 0" class="err">יש למלא את כל השדות</div>
     <div *ngIf="form?.text?.h3 || form?.text?.html" class="txtcenter">
       <h3 *ngIf="form?.text?.h3">{{ form?.text?.h3 }}</h3>
@@ -63,8 +63,8 @@
         </div>
 
         <div tappable (click)="openSelect(field,i)" class="field input"
-             *ngIf="field.type == 'select'" [ngClass]="{'error': errors[field.name]}">
-          <div class="placeholder">{{ field.label }}</div>
+             *ngIf="field.type == 'select' && (user.userGender == '2' || field?.class == 'she' || !field?.class)" [ngClass]="{'error': errors[field.name]}">
+          <div class="placeholder" [ngClass]="{'she': user.userGender == '2' && field?.class == 'she', 'he': user.userGender == '2' && field?.class == 'he'}">{{ field.label }}</div>
           <ion-item>
             <div class="select-value">{{field.valLabel}}</div>
 
@@ -76,7 +76,7 @@
              [ngClass]="{'error': errors[field.name]}">
           <div class="placeholder" [innerHTML]="field.label"></div>
           <ion-item>
-                         <textarea (ionFocus)="inputClick(field.name)" placeholder="{{ field.label }}"
+                         <textarea placeholder="{{ field.label }}"
                                    class="txtbox big" cols="2" rows="2"
                                    name="{{ field.name }}" [(ngModel)]="user[field.name]"
                                    id="{{ field.name }}"></textarea>
@@ -89,15 +89,15 @@
             {{ field.label }}
           </div>
           <ion-item>
-            <ion-input (ionFocus)="inputClick(field.name)" value="1" name="{{ field.name }}"
+            <ion-input value="1" name="{{ field.name }}"
                        id="{{ field.name }}" type="{{ field.type }}"
                        [(ngModel)]="user[field.name]"></ion-input>
           </ion-item>
           <div *ngIf="errors[field.name]" class="err">{{errors[field.name] }}</div>
         </div>
 
-        <div *ngIf="field.type == 'selects'" class="input" style="overflow: hidden">
-          <div class="placeholder">{{ field.label }}</div>
+        <div *ngIf="field.type == 'selects' && (user.userGender == '2' || field?.class == 'she' || !field?.class)" class="input" style="overflow: hidden">
+          <div class="placeholder" [ngClass]="{'she': user.userGender == '2' && field?.class == 'she', 'he': user.userGender == '2' && field?.class == 'he'}">{{ field.label }}</div>
           <div class="birthday">
             <ion-item *ngFor="let select of field.sel" (click)="openSelect(select,i)">
               <div class="select-value">{{select.valLabel}}</div>
@@ -106,15 +106,15 @@
           <div *ngIf="errors[field.name]" class="err">{{errors[field.name] }}</div>
         </div>
 
-        <div class="field" *ngIf="field.type == 'multiselect'"
+        <div class="field" *ngIf="field.type == 'multiselect' && (user.userGender == '2' || field?.class == 'she' || !field?.class)"
              [ngClass]="{'error': errors[field.name]}">
-          <div class="placeholder">{{ field.label }}</div>
+          <div class="placeholder" [ngClass]="{'she': user.userGender == '2' && field?.class == 'she', 'he': user.userGender == '2' && field?.class == 'he'}">{{ field.label }}</div>
           <ion-item>
             <ion-select okText="אישור" cancelText="ביטול" data-placeholder=""
                         interface="alert" multiple="true" [selectOptions]="{title: field.label}"
                         name="{{ field.name }}" [(ngModel)]="user[field.name]"
                         id="{{ field.name }}">
-              <ion-option *ngFor="let option of field.choices;" value="{{ option.val }}">{{
+              <ion-option *ngFor="let option of field.choices;" value="{{ option.value }}">{{
                 option.label }}
               </ion-option>
             </ion-select>
@@ -123,25 +123,28 @@
         </div>
 
         <div *ngIf="field.type == 'range-input'" class="field"
-             [ngClass]="{'error': (errors[field.name1] || errors[field.name2])}">
+             [ngClass]="{'error': (errors[field.nameFrom] || errors[field.nameTo])}">
           <div class="placeholder">{{ field.label }}</div>
-          <div style="width:43%; padding: 7px 8px 7px 16px; float:right; overflow: hidden">
-            <input style="border: 0; padding: 7px 8px 7px 16px; border-radius: 5px;" type="text"
-                   (ionFocus)="inputClick(field.name1)" class="txtbox" [(ngModel)]="user[field.name1]"
-                   name="{{ field.name1 }}"
-                   id="{{ field.name1 }}" maxlength="3">
-          </div>
-          <div style="float:right; width: 14%; border: 0;font-size:15px;line-height:40px;text-align:center;">
-            {{ field.subLabel }}
-          </div>
-          <div style="width:43%; padding: 7px 8px 7px 16px; overflow: hidden; float:right; border: 0">
-            <input style="border: 0; padding: 7px 8px 7px 16px; border-radius: 5px;"
-                   (ionFocus)="inputClick(field.name2)" type="text" class="txtbox"
-                   [(ngModel)]="user[field.name2]" name="{{ field.name2 }}"
-                   id="{{ field.name2 }}" maxlength="3">
-          </div>
-          <div *ngIf="errors[field.name1]" class="err">{{ errors[field.name1] }}</div>
-          <div *ngIf="!errors[field.name1] && errors[field.name2]" class="err">{{ errors[field.name2] }}</div>
+          <ion-item>
+            <div style="float:right; width: 7%; border: 0;font-size:15px;line-height:44px;text-align:center;">{{ field.labelFrom }}</div>
+            <div style="width:43%; padding: 7px 8px 7px 16px; float:right; overflow: hidden">
+              <input style="border: 0; padding: 7px 8px 7px 16px; border-radius: 5px;font-size: 16px; width: 100%;" type="text"
+                     class="txtbox" [(ngModel)]="user[field.nameFrom]"
+                     name="{{ field.nameFrom }}"
+                     id="{{ field.nameFrom }}" maxlength="3" />
+            </div>
+            <div style="float:right; width: 7%; border: 0;font-size:15px;line-height:44px;text-align:center;">
+              {{ field.labelTo }}
+            </div>
+            <div style="width:43%; padding: 7px 8px 7px 16px; overflow: hidden; float:right; border: 0">
+              <input style="border: 0; padding: 7px 8px 7px 16px; border-radius: 5px;font-size: 16px; width: 100%;"
+                     type="text" class="txtbox" [(ngModel)]="user[field.nameTo]" name="{{ field.nameTo }}"
+                     id="{{ field.nameTo }}" maxlength="3" />
+            </div>
+            <div class="clr"></div>
+          </ion-item>
+          <div *ngIf="errors[field.nameFrom]" class="err">{{ errors[field.nameFrom] }}</div>
+          <div *ngIf="!errors[field.nameFrom] && errors[field.nameTo]" class="err">{{ errors[field.nameTo] }}</div>
         </div>
 
       </div>

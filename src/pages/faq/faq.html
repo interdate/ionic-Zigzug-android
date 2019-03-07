@@ -18,8 +18,7 @@
     <div *ngFor="let q of page; let qi = index">
       <h2 class="headline">{{q?.name}}</h2>
       <div class="question" *ngFor="let qa of q?.faq, let i = index" id="q_{{qi}}{{i}}" padding-top padding-bottom (click)="toggleAnswer(qi,i);">
-        <div>
-          {{qa.q }}
+        <div [innerHTML]="qa.q">
         </div>
         <div class="answer" [innerHTML]="qa.a">
         </div>

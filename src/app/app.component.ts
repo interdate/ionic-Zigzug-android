@@ -17,7 +17,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
 import { HomePage } from '../pages/home/home';
 
-import * as $ from "jquery";
+import * as $ from 'jquery';
 import {LoginPage} from "../pages/login/login";
 import {ArenaPage} from "../pages/arena/arena";
 import {ProfilePage} from "../pages/profile/profile";
@@ -33,6 +33,10 @@ import {ChangePhotosPage} from "../pages/change-photos/change-photos";
 import {ChangePasswordPage} from "../pages/change-password/change-password";
 import {SettingsPage} from "../pages/settings/settings";
 import {DialogPage} from "../pages/dialog/dialog";
+import {SubscriptionPage} from "../pages/subscription/subscription";
+//import {FirebaseMessagingProvider} from "../providers/firebase-messaging";
+
+
 
 @Component({
   templateUrl: 'app.html'
@@ -45,13 +49,13 @@ export class MyApp {
     rootPage: any;
 
     banner: {src: string; link: string};
-    menu_items_logout: Array<{_id: string, icon: string, title: string, count: any, component: any}>;
-    menu_items_login: Array<{_id: string, icon: string, title: string, count: any, component: any}>;
-    menu_items: Array<{_id: string, icon: string, title: string, count: any, component: any}>;
-    menu_items_settings: Array<{_id: string, icon: string, title: string, count: any, component: any}>;
-    menu_items_contacts: Array<{_id: string, list: string, icon: string, title: string, count: any, component: any}>;
-    menu_items_footer1: Array<{_id: string, src_img: string, list: string, icon: string, count: any, title: string, component: any}>;
-    menu_items_footer2: Array<{_id: string, src_img: string, list: string, icon: string, title: string, count: any, component: any}>;
+    menu_items_logout: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
+    menu_items_login: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
+    menu_items: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
+    menu_items_settings: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
+    menu_items_contacts: any;//Array<{_id: string, list: string, icon: string, title: string, count: any, component: any}>;
+    menu_items_footer1: any;//Array<{_id: string, src_img: string, list: string, icon: string, count: any, title: string, component: any}>;
+    menu_items_footer2: any;//Array<{_id: string, src_img: string, list: string, icon: string, title: string, count: any, component: any}>;
 
     activeMenu: string;
     username: any;
@@ -66,6 +70,7 @@ export class MyApp {
     avatar: string = '';
     stats: string = '';
     interval: any = true;
+    push2: PushObject;
 
   constructor(
       public platform: Platform,
@@ -78,29 +83,78 @@ export class MyApp {
       public alertCtrl: AlertController,
       public events: Events,
       public loadingCtrl: LoadingController,
-      public push: Push
+      public push: Push//,
+      //private browserPush: FirebaseMessagingProvider // push for browser
+
   ) {
-      this.api.http.get(api.url + '/user/menu/', this.api.header).subscribe(data => {
-            let resp: any = data;
-          this.initMenuItems(resp.menu);
+      //alert(pushMess.currentToken);
+      //this.browserPush.disableNotifications();
+      //this.browserPush.enableNotifications();
+
+
+      this.api.storage.get('fingerAIO').then((val:any)=>{
+          //alert(JSON.stringify(val));
+          this.api.setEnableFingerAuth = (val && typeof val.setEnableFingerAuth != 'undefined') ? Boolean(parseInt(val.setEnableFingerAuth)) : true;
+          this.api.faioData = val;
+          this.api.fingerAuth = (val && typeof val.password != 'undefined') ? true : false;
+      });
+
+      this.api.fingerAIO.isAvailable().then((result: any) => {
+          this.api.enableFingerAuth = 1;
+      }).catch((error: any) => {
+          this.api.enableFingerAuth = 0;
+      });
+
+      this.api.http.get(api.url + '/user/menu/', this.api.setHeaders(false)).subscribe((data: any) => {
+          //let resp: any = data;
+          //alert(JSON.stringify(resp));
+          this.initMenuItems(data.menu);
 
           this.api.storage.get('user_data').then((val) => {
               if (!val) {
                   this.rootPage = LoginPage;
                   this.menu_items = this.menu_items_logout;
               } else {
+                  this.api.password = val.password;
+                  this.api.myId = val.user_id;
                   this.api.setHeaders(true,val.username,val.password);
                   this.menu_items = this.menu_items_login;
                   this.getBingo();
-                  this.rootPage = HomePage;
+                  this.status = val.status;
+                  //var params = {};
+                  //alert('er');
+                  if(val.status == 'toPay'){
+                      //this.nav.setRoot(SubscriptionPage);
+                      this.rootPage = SubscriptionPage;
+                      //this.nav.popToRoot();
+                  }else if(val.status == 'not_activated'){
+                      this.rootPage = LoginPage;
+                      this.menu_items = this.menu_items_logout;
+                      var params = {
+                          'login':{
+                              username: this.api.username,
+                              password: this.api.password
+                          }
+                      };
+                      this.nav.push(this.rootPage,params);
+                      //this.nav.popToRoot();
+                  }else {
+                      this.rootPage = HomePage;
+                      this.api.sendBrowserPhoneId();
+                  }
               }
-              this.initPushNotification();
-              //this.nav.setRoot(this.rootPage);
-              //this.nav.popToRoot();
-
+              this.initPushNotification(); //push for android
+              if(!val || val.status != 'not_activated') {
+                  this.nav.setRoot(this.rootPage);
+                  this.nav.popToRoot();
+              }
           });
           //alert(3);
-      });
+      },
+      (error: any) => {
+          //alert('Error: ' + JSON.stringify(error));
+      }
+      );
 
       this.closeMsg();
       var that = this;
@@ -120,26 +174,30 @@ export class MyApp {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-        this.statusBar.show();
-      //this.statusBar.styleDefault();
-        this.statusBar.styleBlackOpaque();
-        this.statusBar.backgroundColorByName('black');
+      //alert(2);
+    this.platform.ready().then((readySource) => {
+        if(readySource=='cordova') {
+            // Okay, so the platform is ready and our plugins are available.
+            // Here you can do any higher level native things you might need.
+            this.statusBar.show();
+            //this.statusBar.styleDefault();
+            this.statusBar.styleBlackOpaque();
+            this.statusBar.backgroundColorByName('black');
 
-        this.splashScreen.hide();
+            this.splashScreen.hide();
+        }
     });
   }
 
     getAppVersion() {
-        this.api.http.get(this.api.url + '/open_api/version', this.api.header).subscribe(data => {
+        this.api.http.get(this.api.url + '/app/version', this.api.header).subscribe(data => {
             let resp: any = data;
             if (this.platform.is('cordova')) {
 
                 //alert(this.appVersion.getVersionCode());
-                this.appVersion.getVersionNumber().then((s) => {
-                    if (resp.version != s) {
+                //update
+                //this.appVersion.getVersionNumber().then((s) => {
+                    if (parseInt(resp.version) > this.api.appVersion) {
                         let prompt = this.alertCtrl.create({
                             title: resp.title,
                             message: resp.message,
@@ -148,20 +206,26 @@ export class MyApp {
                                 {
                                     text: resp.cancel,
                                     handler: data => {
-                                        console.log('Cancel clicked');
+                                        //console.log('Cancel clicked');
+                                        if(Boolean(parseInt(resp.mustUpdate))){
+                                            this.getAppVersion();
+                                        }
                                     }
                                 },
                                 {
                                     text: resp.update,
                                     handler: data => {
-                                        window.open('market://details?id=com.interdate.shedate', '_system');
+                                        window.open(resp.url, '_system'); //'market://details?id=co.il.zigzug'
+                                        if(Boolean(parseInt(resp.mustUpdate))){
+                                            this.getAppVersion();
+                                        }
                                     }
                                 }
                             ]
                         });
                         prompt.present();
                     }
-                })
+                //})
             }
 
         });
@@ -176,19 +240,35 @@ export class MyApp {
     }
 
     getStatistics() {
-
         this.api.storage.get('user_data').then((val) => {
             if (val) {
-
-                //let page = this.nav.getActive();
-                //let headers = this.api.setHeaders(true);
-                //if (this.api.pageName == 'ChangePhotosPage') {
-                    //headers = this.api.setHeaders(true, false, false, '1');
-                //}
-
                 this.api.http.get(this.api.url + '/user/statistics/', this.api.setHeaders(true)).subscribe(data => {
                     var resp: any = data;
                     let statistics = resp.statistics;
+
+                    if(val.status != resp.status){
+                        this.status = val.status = resp.status;
+                        val.userIsPaying = resp.userIsPaying;
+                        this.api.storage.set('user_data', val);
+                    }
+                    if(resp.status == 'toPay' && this.api.pageName != 'SubscriptionPage' && this.api.pageName != 'LoginPage'){
+                        this.nav.setRoot(SubscriptionPage);
+                        this.nav.popToRoot();
+                    }else if(resp.status == 'login' && this.api.pageName == 'SubscriptionPage' && resp.userIsPaying == 1){
+                        this.nav.setRoot(HomePage);
+                        this.nav.popToRoot();
+                    }else if (resp.status == 'not_activated' && this.api.pageName != 'LoginPage' && this.api.pageName != 'ContactUsPage' && this.api.pageName != 'PasswordRecoveryPage'
+                        && !(this.api.pageName == 'ChangePhotosPage') && !(this.api.pageName == 'RegisterPage') && !(this.api.pageName == 'TermsPage') && this.api.pageName != 'ActivationPage') {
+
+
+                        //this.checkStatus();
+                        this.nav.push(LoginPage, {
+                            'login':{
+                                username: this.api.username,
+                                password: this.api.password
+                            }
+                        });
+                    }
 
                     this.isPaying = resp.userIsPaying;
 
@@ -206,26 +286,45 @@ export class MyApp {
                     this.menu_items_contacts[5].count = statistics.favedme;//favoritedMe
                     this.menu_items_contacts[6].count = statistics.black;//blacklisted
                     //Footer Menu
-                    this.menu_items_footer2[2].count = statistics.newNotificationsNumber;
+                    this.menu_items_footer2[1].count = statistics.newNotificationsNumber;
                     //this.menu_items_footer2[2].count = 0;
                     this.menu_items_footer1[3].count = statistics.newMessagesNumber;
+                    if(typeof this.push2 != 'undefined') {
+                        this.push2.setApplicationIconBadgeNumber(statistics.newMessagesNumber);
+                    }
                     this.menu_items_footer2[0].count = statistics.fav;//favorited
-                    this.menu_items_footer2[1].count = statistics.favedme;//favoritedMe
+                    //this.menu_items_footer2[1].count = statistics.favedme;//favoritedMe
                     //this.bannerStatus();
                     // First Sidebar Menu
                     /*this.menu_items[2].count = statistics.newNotificationsNumber;
                      this.menu_items[0].count = statistics.newMessagesNumber;*/
+                    this.api.errorMess = '';
                 }, err => {
-                    //console.log('Statistics Error');
+                    console.log('Statistics Error: ' + JSON.stringify(err));
                     this.api.hideLoad();
-                    if(err.status == 403 ){
-
-                        this.api.setHeaders(false, null, null);
-                        // Removing data storage
-                        this.api.storage.remove('user_data');
-                        this.nav.setRoot(LoginPage,{error:err['_body']});
-                        this.nav.popToRoot();
+                    if(err.status == 403 ) {
+                        if(this.api.status != 'block') {
+                            this.homePage();
+                            this.api.errorMess = err.error;
+                        }
+                    }else{
+                        this.api.errorMess = '';
                     }
+                    // if(err.status == 403 ){
+                    //     //if(val.status != resp.status){
+                    //     //                         this.status = val.status = resp.status;
+                    //     //                         val.userIsPaying = resp.userIsPaying;
+                    //     //                         this.api.storage.set('user_data', val);
+                    //     //                     }
+                    //     if(this.api.status != 'block' && this.api.pageName != 'LoginPage') {
+                    //         this.api.status = 'block';
+                    //         //this.api.setHeaders(false, null, null);
+                    //         // // Removing data storage
+                    //         //this.api.storage.remove('user_data');
+                    //         this.nav.push(LoginPage, {error: err.error});
+                    //         //this.nav.popToRoot();
+                    //     }
+                    // }
 
                     //this.nav.push(this.rootPage);
                     //this.clearLocalStorage(); //*********************************** put a message *************************
@@ -275,10 +374,11 @@ export class MyApp {
             {_id: 'the_area', icon: '', title: menu.the_arena, component: ArenaPage, count: ''},
             {_id: 'notifications', icon: '', title: menu.notifications, component: NotificationsPage, count: ''},
             {_id: 'stats', icon: 'stats', title: menu.contacts, component: ProfilePage, count: ''},
+            {_id: 'freeToday', src_img: 'assets/img/free_today.png', icon: '', title: menu.freeToday, list: 'freeToday', component: HomePage, count: ''},
             {_id: 'search', icon: '', title: menu.search, component: SearchPage, count: ''},
             {_id: '', icon: 'information-circle', title: 'שאלות נפוצות', component: FaqPage, count: ''},
             {_id: '', icon: 'mail', title: menu.contact_us, component: ContactUsPage, count: ''},
-            {_id: 'subscribe', icon: 'ribbon', title: 'רכישת מנוי', component: 'SubscriptionPage', count: ''},
+            {_id: 'subscribe', icon: 'ribbon', title: 'רכישת מנוי', component: SubscriptionPage, count: ''},
 
         ];
 
@@ -287,7 +387,7 @@ export class MyApp {
             {_id: 'edit_photos', icon: '', title: menu.edit_photos, component: ChangePhotosPage, count: ''},
             {_id: '', icon: 'person', title: menu.view_my_profile, component: ProfilePage, count: ''},
             {_id: 'change_password', icon: '', title: menu.change_password, component: ChangePasswordPage, count: ''},
-            {_id: 'freeze_account', icon: '', title: menu.freeze_account, component: 'FreezeAccountPage', count: ''},
+            /*{_id: 'freeze_account', icon: '', title: menu.freeze_account, component: 'FreezeAccountPage', count: ''},*/
             {_id: 'settings', icon: '', title: menu.settings, component: SettingsPage, count: ''},
             {_id: '', icon: 'mail', title: menu.contact_us, component: ContactUsPage, count: ''},
             {_id: 'logout', icon: 'log-out', title: menu.log_out, component: LoginPage, count: ''}
@@ -350,10 +450,10 @@ export class MyApp {
                 count: ''
             },
             {
-                _id: 'viewed',
+                _id: 'arena',
                 src_img: 'assets/img/icons/new-arena.png',
                 icon: '',
-                list: 'viewed',
+                list: '',
                 title: menu.the_arena,
                 component: ArenaPage,
                 count: ''
@@ -361,7 +461,7 @@ export class MyApp {
             {
                 _id: 'near-me',
                 src_img: '',
-                title: 'קרובות אלי',
+                title: menu.near_me,
                 list: 'distance',
                 icon: 'pin',
                 component: HomePage,
@@ -388,7 +488,7 @@ export class MyApp {
                 component: HomePage,
                 count: ''
             },
-            {
+            /*{
                 _id: '',
                 src_img: 'assets/img/icons/favorited_me.png',
                 icon: '',
@@ -396,7 +496,7 @@ export class MyApp {
                 title: menu.favorited_me,
                 component: HomePage,
                 count: ''
-            },
+            },*/
             {
                 _id: 'notifications',
                 src_img: 'assets/img/icons/notifications_ft.png',
@@ -407,6 +507,7 @@ export class MyApp {
                 count: ''
             },
             {_id: '', src_img: 'assets/img/icons/search.png', icon: '', title: menu.search, list: '', component: 'SearchPage', count: ''},
+            {_id: '', src_img: 'assets/img/free_today.png', icon: '', title: menu.freeToday, list: 'freeToday', component: HomePage, count: ''},
         ];
     }
 
@@ -458,9 +559,7 @@ export class MyApp {
         }
 
         const options: PushOptions = {
-            android: {
-                senderID: "778112311036"
-            },
+            android: {},
             ios: {
                 alert: 'true',
                 badge: true,
@@ -472,19 +571,19 @@ export class MyApp {
             }
         };
 
-        const push2: PushObject = this.push.init(options);
+        this.push2 = this.push.init(options);
 
-        push2.on('registration').subscribe((data) => {
+        this.push2.on('registration').subscribe((data) => {
             //this.deviceToken = data.registrationId;
             this.api.storage.set('deviceToken', data.registrationId);
             this.api.sendPhoneId(data.registrationId);
             //TODO - send device token to server
         });
 
-        push2.on('notification').subscribe((data) => {
+        this.push2.on('notification').subscribe((data) => {
             //let self = this;
             //if user using app and push notification comes
-            if (data.additionalData.foreground == false) {
+            /*if (data.additionalData.foreground == false) {
                 this.api.storage.get('user_data').then((val) => {
                     if (val) {
                         this.nav.push(InboxPage);
@@ -492,8 +591,53 @@ export class MyApp {
                         this.nav.push(LoginPage);
                     }
                 });
+            }*/
+
+            if(data.additionalData.foreground == false){
+                this.openPushMessage(data);
+            }else{
+                if(this.api.pageName != 'DialogPage') {
+                    let alert = this.alertCtrl.create({
+                        title: data.additionalData.titleMess,
+                        message: data.message,
+                        buttons: [
+                            {
+                                text: data.additionalData.buttons[0],
+                                role: 'cancel',
+                                handler: () => {
+                                    console.log('Cancel clicked');
+                                }
+                            },
+                            {
+                                text: data.additionalData.buttons[1],
+                                handler: () => {
+                                    this.openPushMessage(data)
+                                }
+                            }
+                        ]
+                    });
+                    alert.present();
+                }
             }
         });
+    }
+
+    openPushMessage(data){
+        if(typeof data.additionalData.urlRedirect == 'undefined'){
+            if(typeof data.additionalData.userId == 'undefined'){
+                this.nav.push(InboxPage);
+            }else{
+                //alert(JSON.stringify(data));
+                this.nav.push(DialogPage, {
+                    user: {
+                        userId: data.additionalData.userId,
+                        userNick: data.additionalData.userNick
+                    }
+                });
+            }
+        }else{
+            /*var ref = */window.open(data.additionalData.urlRedirect, '_system');
+        }
     }
 
     swipeFooterMenu() {
@@ -527,7 +671,7 @@ export class MyApp {
     }
 
     goTo() {
-        window.open(this.banner.link, '_blank');
+        window.open(this.banner.link, '_system');
         return false;
     }
 
@@ -535,6 +679,10 @@ export class MyApp {
 
         if (page._id == 'logout') {
             this.status = '';
+            this.api.storage.remove('user_data');
+            this.api.setHeaders(false, null, null);
+            this.nav.setRoot(LoginPage);
+            this.nav.popToRoot();
         }
 
 
@@ -553,34 +701,53 @@ export class MyApp {
                     filter: 'new',
                     list: '',
                     page: 1,
-                    searchparams: {region: '', agefrom: 0, ageto: 0, sexpreef: '', meritalstat: '', userNick: ''}
+                    usersCount: 20,
+                    searchparams: {region: '', agefrom: 0, ageto: 0, userNick: ''}
                 });
             } else if (page.list == 'distance') {
                 params = JSON.stringify({
-                    action: 'search',
+                    action: 'online',//'search',
                     filter: page.list,
                     list: '',
                     page: 1,
-                    searchparams: {region: '', agefrom: 0, ageto: 0, sexpreef: '', meritalstat: '', userNick: ''}
+                    usersCount: 20,
+                    searchparams: {region: '', agefrom: 0, ageto: 0, userNick: ''}
                 });
-            }
+            } else if (page.list == 'freeToday') {
+                params = JSON.stringify({
+                    action: 'search',
+                    filter: 'new',
+                    list: '',
+                    page: 1,
+                    usersCount: 15,
+                    searchparams: {region: '', agefrom: 0, ageto: 0, userNick: '', freeToday: 1}
+                });
+            } else if (page._id == 'subscribe') {
+                // this.api.storage.get('user_data').then((val) => {
+                //     if(val && val.user_id) {
+                //         window.open('https://www.zigzug.co.il/newpayment/?userId=' + val.user_id + '&app=1', '_blank');
+                //     }
+                // });
 
-            else {
+            } else {
 
                 params = JSON.stringify({
                     action: '',
                     list: page.list,
                     filter: 'lastActivity',
                     page: 1,
-                    searchparams: {region: '', agefrom: 0, ageto: 0, sexpreef: '', meritalstat: '', userNick: ''}
+                    usersCount: 20,
+                    searchparams: {region: '', agefrom: 0, ageto: 0, userNick: ''}
                 });
             }
-            if (page._id == 'edit_profile') {
-                let params = {user: {step: 0, register: false}};
-                this.nav.push(RegisterPage, params);
-            } else {
-                this.nav.push(page.component, {page: page, action: 'list', params: params});
-            }
+            //if(page._id != 'subscribe') {
+                if (page._id == 'edit_profile') {
+                    let params = {user: {step: 0, register: false}};
+                    this.nav.push(RegisterPage, params);
+                } else {
+                    this.nav.push(page.component, {page: page, action: 'list', params: params});
+                }
+            //}
         }
     }
 
@@ -610,7 +777,7 @@ export class MyApp {
                             bingo: resp.user
                         });
                         this.nav.push(BingoPage, {data: resp});
-                        this.api.http.post(this.api.url + '/user/bingo/splashed', params, this.api.setHeaders(true)).subscribe(data => { });
+                        this.api.http.post(this.api.url + '/user/bingo/splashed', params, this.api.setHeaders(true)).subscribe(data1 => { });
                     }
                 });
             }
@@ -645,26 +812,33 @@ export class MyApp {
 
     checkStatus() {
         //let page = this.nav.getActive();
-        if (!(this.api.pageName == 'ActivationPage') && !(this.api.pageName == 'ContactUsPage') && !(this.api.pageName == 'ChangePhotosPage') && !(this.api.pageName == 'RegistrationThreePage')
+        if (!(this.api.pageName == 'ActivationPage') && !(this.api.pageName == 'ContactUsPage') && !(this.api.pageName == 'ChangePhotosPage')
             && !(this.api.pageName == 'RegisterPage') && !(this.api.pageName == 'TermsPage')) {
             if (this.status == 'no_photo') {
 
-                let toast = this.toastCtrl.create({
-                    message: this.texts.photoMessage,
-                    showCloseButton: true,
-                    closeButtonText: 'אישור'
-                });
-                if (this.texts.photoMessage) {
-                    toast.present();
-                }
-                //alert(page);
-                this.nav.push(RegisterPage);
-                this.nav.push(ChangePhotosPage);
-            } else if (this.status == 'not_activated') {
+                // let toast = this.toastCtrl.create({
+                //     message: this.texts.photoMessage,
+                //     showCloseButton: true,
+                //     closeButtonText: 'אישור'
+                // });
+                // if (this.texts.photoMessage) {
+                //     toast.present();
+                // }
+                // //alert(page);
+                // this.nav.push(RegisterPage);
+                // this.nav.push(ChangePhotosPage);
+            } else if (this.status == 'not_activated' && !(this.api.pageName == 'LoginPage') && this.api.pageName != 'PasswordRecoveryPage') {
+                //alert(this.api.pageName);
                 //this.nav.push('ActivationPage');
+                // this.nav.push(LoginPage, {
+                //     'login':{
+                //         username: this.api.username,
+                //         password: this.api.password
+                //     }
+                // });
             }
         }
-        if (((this.api.pageName == 'ActivationPage') && this.status == 'login')) {
+        if (((this.api.pageName == 'LoginPage') && this.status == 'login')) {
             this.nav.push(HomePage);
         }
     }
@@ -693,37 +867,40 @@ export class MyApp {
                 $('.footerMenu').show();
             }
 
-            let el = this;
+            //let el = this;
             window.addEventListener('native.keyboardshow', function () {
-                $('.footerMenu, .back-btn, .link-banner').hide();
-                if (el.api.pageName == 'DialogPage') {
-                    this.content.scrollTo(0, 999999, 300);
-                    setTimeout(function () {
-                        $('.scroll-content, .fixed-content').css({'margin-bottom': '65px'});
-                        this.content.scrollTo(0, 999999, 300);
-                    }, 400);
-                } else {
-                    setTimeout(function () {
-                        $('.scroll-content, .fixed-content').css({'margin-bottom': '0px'});
-                    }, 400);
-                }
+                //alert(1);
+                $('.keyboardClose').hide();
+                // $('.footerMenu, .back-btn, .link-banner').hide();
+                // if (el.api.pageName == 'DialogPage') {
+                //     this.content.scrollTo(0, 999999, 300);
+                //     setTimeout(function () {
+                //         $('.scroll-content, .fixed-content').css({'margin-bottom': '65px'});
+                //         this.content.scrollTo(0, 999999, 300);
+                //     }, 400);
+                // } else {
+                //     setTimeout(function () {
+                //         $('.scroll-content, .fixed-content').css({'margin-bottom': '0px'});
+                //     }, 400);
+                // }
             });
             window.addEventListener('native.keyboardhide', function () {
-
-                if (el.api.pageName == 'DialogPage') {
-                    $('.back-btn').show();
-                    $('.footerMenu').hide();
-                    $('.scroll-content, .fixed-content').css({'margin-bottom': '65px'});
-                    el.content.scrollTo(0, 999999, 300);
-                } else {
-                    if (el.is_login) {
-                        $('.footerMenu').show();
-
-                        $('.scroll-content, .fixed-content').css({'margin-bottom': '57px'});
-                    } else {
-                        $('.scroll-content, .fixed-content').css({'margin-bottom': '0px'});
-                    }
-                }
+                //alert(2);
+                $('.keyboardClose').show();
+                // if (el.api.pageName == 'DialogPage') {
+                //     $('.back-btn').show();
+                //     $('.footerMenu').hide();
+                //     $('.scroll-content, .fixed-content').css({'margin-bottom': '65px'});
+                //     el.content.scrollTo(0, 999999, 300);
+                // } else {
+                //     if (el.is_login) {
+                //         $('.footerMenu').show();
+                //
+                //         $('.scroll-content, .fixed-content').css({'margin-bottom': '57px'});
+                //     } else {
+                //         $('.scroll-content, .fixed-content').css({'margin-bottom': '0px'});
+                //     }
+                // }
 
             });
 
@@ -746,11 +923,16 @@ export class MyApp {
                 this.checkStatus();
                 if (!val) {
                     this.menu_items = this.menu_items_logout;
-                    this.is_login = false
+                    this.is_login = false;
                 } else {
                     this.getStatistics();
-                    this.is_login = true;
-                    this.menu_items = this.menu_items_login;
+                    if(val.status == 'not_activated'){
+                        this.menu_items = this.menu_items_logout;
+                        this.is_login = false;
+                    }else {
+                        this.is_login = true;
+                        this.menu_items = this.menu_items_login;
+                    }
                 }
 
             });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>ZigZug App</title>
@@ -8,6 +8,7 @@
   <meta name="msapplication-tap-highlight" content="no">
 
   <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/img/icon.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4e8ef7">
 
@@ -15,33 +16,37 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <link href="assets/select2.min.css" rel="stylesheet">
+  <!--<link href="assets/select2.min.css" rel="stylesheet">-->
   <!-- cordova.js required for cordova apps (remove if not needed) -->
   <script src="cordova.js"></script>
 
-  <!-- un-comment this code to enable service worker
+  <!-- un-comment this code to enable service worker  -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('service worker installed'))
         .catch(err => console.error('Error', err));
     }
-  </script>-->
+  </script>
+
 
   <link href="build/main.css" rel="stylesheet">
   <link href="assets/custom.css" rel="stylesheet">
 
+
 </head>
 <body>
-
   <!-- Ionic's root component and where the app will load -->
   <ion-app></ion-app>
 
-  <script src="assets/jquery.js"></script>
+  <!--<script src="assets/jquery.js"></script>
+  <script src="assets/jquery.form.js"></script>
+  <script src="assets/my-function.js"></script>-->
+  <!--<script src="https://www.gstatic.com/firebasejs/5.5.6/firebase.js"></script>-->
+  <!--<script src="assets/notification.js"></script>-->
 
-  <script src="assets/my-function.js"></script>
 
-  <script src="assets/select2.full.min.js"></script>
+  <!--<script src="assets/select2.full.min.js"></script>-->
 
   <!-- The polyfills js is generated during the build process -->
   <script src="build/polyfills.js"></script>

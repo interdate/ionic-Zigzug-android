@@ -6,7 +6,7 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>login</ion-title>
+    <ion-title>Login</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -26,17 +26,17 @@
       <ion-item>
         <ion-input [(ngModel)]="form.login.password.value" type="password" placeholder="{{ form.login.password.label }}"></ion-input>
       </ion-item>
-      <div color="red" class="err">{{ errors }}</div>
+      <div *ngIf="errors" color="red" class="err">{{ errors }}</div>
 
     </ion-list>
 
     <div class="login-btn">
       <button margin-bottom color="danger" tappable (click)="formSubmit()" ion-button block>{{ form.login.submit }}</button>
-      <div *ngIf="fingerAuth">
-        <button color="danger" (click)="fingerAuthentication(true)" tappable (click)="formSubmit()" ion-button block>כניסה לשידייט באמצעות טביעת אצבע</button>
+      <div *ngIf="api.fingerAuth && api.setEnableFingerAuth" class="keyboardClose" [hidden]="keyboard.isOpen()">
+        <button color="danger" (click)="api.fAllInOne({navCtrl: navCtrl})" tappable ion-button block>{{ form.login.fingerprint_login }}</button>
       </div>
     </div>
-    <div padding-top padding-left padding-right>
+    <div padding-top padding-left padding-right class="keyboardClose" [hidden]="keyboard.isOpen()">
       <button color="danger" class="btn" (click)="onRegistrationPage()" ion-button default>{{ form.login.join_free }}</button>
       <button color="danger" class="btn grey" (click)="onPasswordRecoveryPage()"  ion-button default>{{ form.login.forgot_password }}</button>
     </div>

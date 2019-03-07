@@ -7,10 +7,10 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{data.label}}</ion-title>
     <ion-buttons>
       <button (click)="close()" end ion-button>Close</button>
     </ion-buttons>
+    <ion-title><span *ngIf="data?.class" class="{{ data?.class }}"></span>{{data.label}}</ion-title>
   </ion-navbar>
   <ion-searchbar data-placeholder="חיפוש" (ionInput)="getItems($event)"></ion-searchbar>
 </ion-header>
@@ -21,7 +21,7 @@
       <ion-item *virtualItem="let item">
 
         <div tappable (click)="getItem(item)">
-          {{item.label}}
+          {{(item.label === '') ? 'לא משנה' : item.label}}
         </div>
 
       </ion-item>

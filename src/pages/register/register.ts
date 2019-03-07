@@ -44,7 +44,9 @@ export class RegisterPage {
     }
 
     getStep(step): void {
-        this.user.step = step;
+        if(this.login == 'login' || parseInt(this.user.step) > parseInt(step)) {
+            this.user.step = step;
+        }
         this.sendForm();
     }
 
@@ -74,30 +76,26 @@ export class RegisterPage {
                 $('#labelconfirmMails').remove();
                 this.form = res.form;
                 this.user = res.user;
+                if(!this.user.step){
+                    this.user.step = this.form.step.val;
+                }
 
                 this.errors = res.errors;
 
-                if (this.user.step == 4) {
+                if (this.user.step == 3) {
                     this.api.setHeaders(true, this.user.userNick, this.user.userPass);
-                    this.login = 'login';
-                    this.api.storage.set('userdata', {
+                    this.login = (this.user.userGender == '1') ? 'not_activated' : 'login';
+                    this.api.myId = this.user.userId;
+                    this.api.storage.set('user_data', {
                         username: this.user.userNick,
                         password: this.user.userPass,
                         user_id: this.user.userId,
-                        status: 'login',
+                        status: this.login,
                         user_photo: ''
                     });
-                    //this.api.storage.set('status', 'login');
-                    //this.api.storage.set('user_id', this.user.userId);
                     this.api.storage.set('username', this.user.userNick);
-                    //this.api.storage.set('password', this.user.userPass);
-                    let data = {
-                        status: 'init',
-                        username: this.user.userNick,
-                        password: this.user.userPass
-                    };
-                    this.api.storage.set('fingerAuth', data);
-                    //alert(JSON.stringify(this.user.photos));
+
+
                     let that = this;
                     setTimeout(function () {
                         that.api.hideLoad();
@@ -105,7 +103,16 @@ export class RegisterPage {
                     this.api.storage.get('deviceToken').then((val) => {
                         this.api.sendPhoneId(val);
                     });
-                    this.navCtrl.push(ChangePhotosPage, {});
+                    if(this.user.register) {
+                        this.navCtrl.push(ChangePhotosPage, {
+                            new_user: true,
+                            username: this.user.userNick,
+                            password: this.user.userPass,
+                            usr: this.user
+                        });
+                    }else{
+                        this.navCtrl.push(ChangePhotosPage);
+                    }
 
                 } else {
                     this.api.hideLoad();
@@ -116,22 +123,11 @@ export class RegisterPage {
                     } else if (this.user.step == 2 && this.user.register) {
                         //this.api.storage.set('new_user', true);
                     }
-                    /*
-                    this.form.fields.forEach(field => {
-                        if (field.type == 'select') {
-                            //this.select2(field, null);
-                        }
-                        if (field.type == 'selects') {
-                            field.sel.forEach(select => {
-                                //this.select2(select, select.choices[0].label);
-                            });
-                        }
-                    });
-                    */
+
                     this.content.scrollToTop(300);
                 }
             }, err => {
-                this.errors = err._body;
+                this.errors = err.error;
                 this.api.hideLoad();
             }
         );
@@ -142,6 +138,9 @@ export class RegisterPage {
             field = false;
 
         }
+        if(this.user.userGender != '2'){
+            field.class = '';
+        }
 
         let profileModal = this.api.modalCtrl.create(SelectPage, {data: field});
         profileModal.present();
@@ -149,7 +148,7 @@ export class RegisterPage {
         profileModal.onDidDismiss(data => {
             console.log(data);
             if (data) {
-                let choosedVal = data.val;
+                let choosedVal = data.value;
                 this.user[field.name] = choosedVal;
                 if(field.name.indexOf('userBirthday') == -1) {
                     this.form.fields[index]['valLabel'] = data.label;
@@ -159,7 +158,6 @@ export class RegisterPage {
                             this.form.fields[index]['sel'][i]['valLabel'] = data.label;
                         }
                     }
-
                 }
             }
         });
@@ -219,7 +217,7 @@ export class RegisterPage {
 
     }
 
-    inputClick(id) {
+    /*inputClick(id) {
 
         let that = this;
         that.content.resize();
@@ -228,7 +226,7 @@ export class RegisterPage {
             $('#' + id).focus();
         }, 400);
 
-    }
+    }*/
 
     goToHome() {
         this.navCtrl.setRoot(HomePage);

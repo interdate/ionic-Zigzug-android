@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Component, ViewChild} from '@angular/core';
+import {Content, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {ApiProvider} from "../../providers/api/api";
 import {HomePage} from "../home/home";
+import {SelectPage} from "../select/select";
 
 /**
  * Generated class for the AdvancedSearchPage page.
@@ -17,88 +18,162 @@ import {HomePage} from "../home/home";
 })
 export class AdvancedSearchPage {
 
+    @ViewChild(Content) content: Content;
+
     form: any;
 
-    ageLower: any = 20;
-    ageUpper: any = 50;
+    searchParams: any = {};
+    //ageLower: any = 20;
+    //ageUpper: any = 50;
 
-    ages: any[] = [];
+    //ages: any[] = [];
 
-    height: any[] = [];
+    //height: any[] = [];
 
-    default_range: any = {lower: this.ageLower, upper: this.ageUpper};
+    //default_range: any = {lower: this.ageLower, upper: this.ageUpper};
+    errors: any = {userId: ''};
 
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
         public api: ApiProvider
     ) {
+        this.api.storage.get('search_params').then((val) => {
+            if(val){
+                this.searchParams = val;
+            }
+        });
         this.api.http.get(api.url + '/user/advanced/search', api.setHeaders(true)).subscribe(data => {
             let res: any = data;
+            if(Object.keys(this.searchParams).length == 0){
+                for(let i = 0; i < res.form.length; i++){
+                    //console.log(i);
+                    let field: any = res.form[i];
+                    if(field) {
+                        //console.log(i);
+
+                        //console.log(field);
+                        if (field.type == 'range') {
+                             this.searchParams[field.nameFrom] = field.valueFrom;
+                             this.searchParams[field.nameTo] = field.valueTo;
+                         } else {
+                             this.searchParams[field.name] = field.value;
+                         }
+                    }
+                }
+            }else{
+                for(let i = 0; i < res.form.length; i++){
+                    let field: any = res.form[i];
+                    if(field) {
+                        if (field.type == 'range') {
+                            res.form[i].valueFrom = res.form[i].valLabelFrom = this.searchParams[field.nameFrom];
+                            res.form[i].valueTo = res.form[i].valLabelTo = this.searchParams[field.nameTo];
+                        }
+                        if (field.type == 'select'){
+                            //res.form[i].value = this.searchParams[field.name];
+                            var label = '';
+                            for(let e = 0; e < field.choices.length; e++){
+                                var choice = field.choices[e];
+                                if(choice.value == this.searchParams[field.name]){
+                                    label = choice.label;
+                                }
+                            }
+                            res.form[i].valLabel = label;
+                        }
+                    }
+                }
+            }
+            console.log(JSON.stringify(res.form));
             this.form = res.form;
-            this.form.heightFrom.value = '';
-            this.form.heightTo.value = '';
+            //this.form.heightFrom.value = '';
+            //this.form.heightTo.value = '';
 
-            for (let i = 100; i <= 250; i++) {
-                this.height.push(i);
-            }
+            //for (let i = 100; i <= 250; i++) {
+            //    this.height.push(i);
+            //}
 
-            for (let i = 18; i <= 80; i++) {
-                this.ages.push(i);
-            }
+            //for (let i = 18; i <= 80; i++) {
+            //    this.ages.push(i);
+            //}
         }, err => {
             console.log("Oops!");
         });
     }
 
-    toSearchResultsPage() {
-        let params = //JSON.stringify(
-            {
-            action: 'search',
-            list: '',
-            filter: 'lastActivity',
-            page: 1,
-            usersCount: 10,
-            advanced_search: {
-                region: this.form.region.value,
-                ageFrom: this.form.age.valueFrom,
-                ageTo: this.form.age.valueTo,
-                body: this.form.body.value,
-                relationship: this.form.relationship.value,
-                hairLength: this.form.hairLengthId.value,
-                hairColor: this.form.hairColor.value,
-                eyesColor: this.form.eyesColor.value,
-                education: this.form.education.value,
-                occupation: this.form.occupation.value,
-                economy: this.form.economy.value,
-                maritalStatus: this.form.maritalStatus.value,
-                religion: this.form.religion.value,
-                religion2: this.form.religion2.value,
-                smoking: this.form.smoking.value,
-                sexPref: this.form.sexPref.value,
-                food: this.form.food.value,
-                sport: this.form.sport.value,
-                closet: this.form.closet.value,
-                defined: this.form.defined.value,
-                experience: this.form.experience.value,
-                children: this.form.userChildren.value,
-                animals: this.form.animals.value,
-                heightFrom: this.form.heightFrom.value,
-                heightTo: this.form.heightTo.value,
-                withPhoto: this.form.withPhotos.value,
+    clearForm(){
+        for(let i = 0; i < this.form.length; i++){
+            //console.log(i);
+            let field: any = this.form[i];
+            if(field) {
+                //console.log(i);
+
+                //console.log(field);
+                if (field.type == 'range') {
+                    this.searchParams[field.nameFrom] = '';
+                    this.searchParams[field.nameTo] = '';
+                    this.form[i].valLabelTo = '';
+                    this.form[i].valLabelFrom = '';
+                } else if(field.type == 'checkbox') {
+                    this.searchParams[field.name] = false;
+                } else if(field.type == 'multiselect'){
+                    this.searchParams[field.name] = [];
+                } else if(field.type != 'hidden' && field.name !='page' && field.name != 'count' && field.name != 'submit'){
+                    this.searchParams[field.name] = '';
+                    if(field.type == 'select'){
+                        this.form[i].valLabel = '';
+                    }
+                }
             }
         }
-        //);
-        this.navCtrl.push(HomePage, {advParams: params});
     }
 
-    getAgeValues(event) {
-        if (event.value.upper != 0) {
-            this.ageUpper = event.value.upper;
+    toSearchResultsPage() {
+        console.log(this.searchParams);
+        if(this.validate()) {
+            this.api.storage.set('search_params', this.searchParams);
+            let params = //JSON.stringify(
+                {
+                    action: 'search',
+                    list: '',
+                    filter: 'lastActivity',
+                    page: 1,
+                    usersCount: this.searchParams.count,
+                    advanced_search: this.searchParams
+                }
+            //);
+            this.navCtrl.push(HomePage, {advParams: params});
         }
-        if (event.value.lower != 0) {
-            this.ageLower = event.value.lower;
+    }
+
+    validate(){
+        var res = true;
+        if(this.searchParams.userId != parseInt(this.searchParams.userId) && this.searchParams.userId != ''){
+            console.log(parseInt(this.searchParams.userId));
+            this.searchParams.userId = isNaN(parseInt(this.searchParams.userId)) ? '' : parseInt(this.searchParams.userId);
+            this.errors.userId = 'אנא הזן מספרים בלבד';
+            res = false;
+            this.content.scrollToTop(300);
         }
+        return res;
+    }
+
+    openSelect(field:any = false, index, add:any = '') {
+
+        //console.log(index);
+        let profileModal = this.api.modalCtrl.create(SelectPage, {data: field});
+        profileModal.present();
+
+        profileModal.onDidDismiss(data => {
+            if (data) {
+                //console.log(JSON.stringify(data));
+                //console.log(JSON.stringify(field));
+                field["value" + add] = data.value;
+                field["valLabel" + add] = data.label;
+
+                this.form[index] = field;
+                this.searchParams[field['name' + add]] = data.value;
+            }
+        });
     }
 
     ionViewWillEnter() {

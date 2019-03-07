@@ -18,8 +18,8 @@
   <div [virtualScroll]="users" [approxItemHeight]="'140px'" [approxItemWidth]="'calc(100% - 20px)'" [bufferRatio]="2">
     <ion-card *virtualItem="let user" tappable (click)="toDialogPage(user)">
       <ion-card-content [ngClass]="{'highlight': user.user.userId==='468385291'}">
-        <div class="usr_img" *ngIf="user.user.mainImage" [ngStyle]="{ 'background-image': 'url('  + user.user.mainImage?.url + ')'}" ></div>
-        <div class="usr_img" *ngIf="user.user.noPhoto" [ngStyle]="{ 'background-image': 'url(' + api.url  + user.noPhoto + ')'}" ></div>
+        <div class="usr_img" *ngIf="user.user.mainImage" [ngStyle]="{ 'background-image': 'url('  + (api.testingMode ? ('https://www.zigzug.co.il/images/users/large/' + user.user.userGender + '.jpg') : user.user.mainImage?.url) + ')'}" ></div>
+        <div class="usr_img" *ngIf="user.user.noPhoto" [ngStyle]="{ 'background-image': 'url(' + (api.testingMode ? ('https://www.zigzug.co.il/images/users/large/' + user.user.userGender + '.jpg') : (api.url  + user.user.noPhoto)) + ')'}" ></div>
         <ion-card-title>
           <div class="name">{{ user.user.nickName }}</div>
           <div class="date">{{ user.recentMessage.date }}</div>

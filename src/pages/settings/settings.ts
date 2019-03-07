@@ -17,14 +17,28 @@ import {ApiProvider} from "../../providers/api/api";
 export class SettingsPage {
 
     form: any = {newMessPushNotif: '', userGetMsgToEmail: ''};
-    fingerprintAuth: any = false;
+    fingerAuth: any;
+    isAvalible: any = 0;
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public toastCtrl: ToastController, public api:ApiProvider) {
+        // this.api.storage.get('faio').then((val:any) => {
+        //     if(val){
+        //         this.fingerAuth = (typeof val.setEnableFingerAuth != 'undefined') ? Boolean(parseInt(val.setEnableFingerAuth)) : true;
+        //         this.isAvalible = (typeof val.isAvailable != 'undefined') ? val.isAvailable : 0;
+        //     }else{
+        //         this.fingerAuth = true;
+        //         this.isAvalible = 0;
+        //     }
+        // });
+        this.fingerAuth = this.api.setEnableFingerAuth;
+        this.isAvalible = this.api.enableFingerAuth;
         this.api.http.get(api.url + '/user/settings', api.setHeaders(true)).subscribe(data => {
             let res:any = data;
             //this.form = data.json().settings;
+            res.settings.newMessPushNotif = (res.settings.newMessPushNotif == null) ? 1 : 0;
             this.form.newMessPushNotif = Boolean(parseInt(res.settings.newMessPushNotif));
             this.form.userGetMsgToEmail = Boolean(parseInt(res.settings.userGetMsgToEmail));
+            this.form.freeToday = Boolean(parseInt(res.settings.freeToday));
         });
     }
 
@@ -51,6 +65,15 @@ export class SettingsPage {
 
             this.api.http.post(this.api.url + '/user/settings/' + name + '/' + value, {}, this.api.setHeaders(true)).subscribe(data => {
             });
+        } else if(type=='free_today'){
+
+            name = 'freeToday';
+            value = this.form.freeToday;
+
+            this.presentToast();
+
+            this.api.http.post(this.api.url + '/user/settings/' + name + '/' + value, {}, this.api.setHeaders(true)).subscribe(data => {
+            });
 
         } else if (type == 'push') {
             name = 'newMessPushNotif';
@@ -61,11 +84,16 @@ export class SettingsPage {
             this.api.http.post(this.api.url + '/user/settings/' + name + '/' + value, {}, this.api.setHeaders(true)).subscribe(data => {
             });
         } else if ('fingerprint') {
-            if (this.form.fingerprint == true) {
-                this.api.storage.set('enableFingerAuth', '1');
-            } else {
-                this.api.storage.set('enableFingerAuth', '0');
-            }
+
+            this.api.storage.get('fingerAIO').then((val:any) => {
+                if(val){
+                    val.setEnableFingerAuth = (this.fingerAuth == true) ? 1 : 0;
+                    this.api.setEnableFingerAuth = this.fingerAuth;
+                    this.api.faioData = val;
+                    this.api.storage.set('fingerAIO', val);
+                }
+            });
+            this.presentToast();
         }
 
 

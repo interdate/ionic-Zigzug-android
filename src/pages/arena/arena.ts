@@ -5,6 +5,7 @@ import {ProfilePage} from "../profile/profile";
 import {ChangePhotosPage} from "../change-photos/change-photos";
 import {DialogPage} from "../dialog/dialog";
 import {NotificationsPage} from "../notifications/notifications";
+import {HomePage} from "../home/home";
 
 /**
  * Generated class for the ArenaPage page.
@@ -22,9 +23,9 @@ export class ArenaPage {
 
     @ViewChild(Slides) slides: Slides;
 
-    users: Array<{ id: string, username: string, photo: string, age: string, area: string, image: string }>;
+    users: Array<{ id: string, username: string, photo: string, age: string, area: string, image: string, isAllowedToSend: string }>;
 
-    texts: { like: string, add: string, message: string, remove: string, unblock: string, no_results: string  };
+    texts: any;
     notifications: any;
     checkNotifications: any;
 
@@ -37,7 +38,7 @@ export class ArenaPage {
         public api: ApiProvider
     ) {
         let user_id = 0;
-        this.api.showLoad('אנא המתיני...');
+        this.api.showLoad('אנא המתן...');
         if (navParams.get('user')) {
             user_id = navParams.get('user');
         }
@@ -50,6 +51,12 @@ export class ArenaPage {
 
             // If there's message, than user can't be on this page
             if (res.arenaStatus) {
+                this.navCtrl.setRoot(HomePage);
+                this.navCtrl.popToRoot();
+                // if(this.navCtrl.getPrevious().name == "ChangePhotosPage"){
+                //     console.log("ChangePhotosPage");
+                //     this.navCtrl.remove(this.navCtrl.getPrevious().index);
+                // }
                 let toast = this.toastCtrl.create({
                     message: res.arenaStatus,
                     showCloseButton: true,
@@ -57,6 +64,7 @@ export class ArenaPage {
                 });
 
                 toast.present();
+                //this.navCtrl.popToRoot();
                 this.navCtrl.push(ChangePhotosPage);
             }
         });
@@ -114,9 +122,24 @@ export class ArenaPage {
 
     toDialog() {
         let user = this.users[this.slides.getActiveIndex()];
-        this.navCtrl.push(DialogPage, {
-            user: user
-        });
+        var mess = '';
+        if(user.isAllowedToSend == '1'){
+            mess = this.texts.chatErrorsMess[1];
+        }else if(user.isAllowedToSend == '2'){
+            mess = this.texts.chatErrorsMess[2];
+        }
+        if(mess == ''){
+            //user.userId = user.id;
+            this.navCtrl.push(DialogPage, {
+                user: user
+            });
+        }else{
+            let toast = this.toastCtrl.create({
+                message: mess,
+                duration: 5000
+            });
+            toast.present();
+        }
     }
 
     toProfile() {

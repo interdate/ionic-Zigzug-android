@@ -73,9 +73,10 @@ page-bingo {
     color: #fff;
     text-align: center;
     line-height: 37px;
-    font-size: 16px;
+    //font-size: 16px;
     background-image: url(../assets/img/chatSplash.png);
     padding-left: 65px;
+    font-size: 0px;
   }
 
   .ignore {
@@ -89,8 +90,9 @@ page-bingo {
     color: #fff;
     text-align: center;
     line-height: 2.6;
-    font-size: 16px;
+    //font-size: 16px;
     width: 175px;
+    font-size: 0px;
   }
 
   @media (max-width: 480px) {

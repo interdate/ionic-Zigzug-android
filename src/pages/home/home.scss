@@ -17,6 +17,7 @@ page-home {
     font-size: 13px;
     display: inline;
     margin-right: 5px;
+    margin-left: -3px;
     line-height: 17px;
     font-weight: bold;
   }
@@ -38,7 +39,7 @@ page-home {
     line-height: 32px;
     background: #fff;
     padding: 0 5px;
-    width: 220px;
+    width: 216px;
     height: 30px;
   }
 
@@ -48,9 +49,9 @@ page-home {
   }
 
   .sortby * {
-    width: 220px;
+    width: 208px;
     position: relative;
-    max-width: 220px;
+    max-width: 208px;
     padding: 0;
     overflow: visible;
   }
@@ -61,7 +62,7 @@ page-home {
 
   .mem-right {
     float: right;
-    width: 222px;
+    width: 218px;
     box-sizing: border-box;
   }
 
@@ -131,21 +132,36 @@ page-home {
     display: inline-block;
     width: calc(50% - 10px) !important;
     padding: 0px;
-    margin: 0 5px;
+    margin: 0 5px 0 5px;
+  }
+
+  ion-card.card-md {
+    width: calc(50% - 16px) !important;
+    //margin: 0 5px 0 5px;
+    margin: 0 11px 0 0px;
+  }
+
+  ion-card.card-ios {
+    //float: left;
+    //margin: 0 0px 0 10px;
+  }
+
+  .list-ios, .list-ios .card-ios {
+    direction: ltr;
   }
 
   .card-ios {
-    width: calc(55% - 23.6px);
-    float: left;
+    //width: calc(55% - 23.6px);
+    //float: left;
   }
 
   @media (max-width: 1919px) {
-    .card-md {
-      width: calc(50%);
-    }
-    .card-ios {
-      width: calc(51.9% - 23.6px);
-    }
+    //.card-md {
+    //  width: calc(50%);
+    //}
+    //.card-ios {
+    //  width: calc(51.9% - 23.6px);
+    //}
   }
 
   @media (max-width: 414px) {
@@ -192,11 +208,26 @@ page-home {
     height: 20px;
     position: absolute;
     background-size: cover;
-    left: 0;
-    top: 129px;
+    left: -1px;
+    top: 122px;
     z-index: 999999;
   }
 
+  .approve{
+    background: url(https://www.zigzug.co.il/images/icons/approved.png) no-repeat;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-size: cover;
+    right: 0px;
+    top: 122px;
+    z-index: 999999;
+  }
+
+}
+
+.ios .sorting{
+  top: 40px;
 }
 
 .platform-ios page-hello-ionic .sorting {
@@ -238,7 +269,7 @@ ion-card {
 }
 
 .long-name {
-  width: 80%;
+  max-width: calc(100% - 47px);
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -328,6 +359,11 @@ ul.profile-btn {
   margin: 0;
 }
 
+.adw{
+  background: #ffb26d;
+  border-radius: 0px 0px 12px 12px;
+}
+
 ul.profile-btn li {
   margin-left: 15%;
   float: none;
@@ -372,6 +408,7 @@ ul.profile-btn .btn div {
 
 .item-md.item-block .item-inner, .item-ios.item-block .item-inner {
   padding-right: 0;
+  padding-left: 0;
 }
 
 .item-md {
@@ -387,4 +424,8 @@ ul.profile-btn .btn div {
 ion-popover {
   // left: -57px;
   top: 38px;
+}
+
+.freeTodayButtons{
+  text-align: center;
 }

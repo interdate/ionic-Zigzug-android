@@ -43,9 +43,12 @@
 }
 
 page-search .scroll-content{
-    margin-top: 59px !important;
+    margin-top: 45px !important;
 }
 
+page-search .content-ios .scroll-content{
+    margin-top: 30px !important;
+}
 
 #notifications {
     background: url(../assets/img/icons/notifications_ft.png) center no-repeat;
@@ -90,10 +93,10 @@ page-search .scroll-content{
 
 .toolbar-content-ios{
     height: 76%;
-    margin-top: 6.7%;
+    /*margin-top: 6.7%;*/
 }
 
 .bar-buttons-ios{
     height: 73%;
-    margin-top: 5.7%;
+    /*margin-top: 5.7%;*/
 }

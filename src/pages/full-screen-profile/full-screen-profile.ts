@@ -47,25 +47,40 @@ export class FullScreenProfilePage {
         this.navCtrl.pop();
     }
 
-    toDialog(user) {
-        this.navCtrl.push(DialogPage, {
-            user: user
-        });
+    toDialog() {
+        var mess = '';
+        if(this.user.isBlack == '1' || this.user.isAllowedToSend == '1'){
+            mess = this.user.texts.chatErrorsMess[1];
+        }else if(this.user.isBlack == '0' &&  this.user.isAllowedToSend == '2'){
+            mess = this.user.texts.chatErrorsMess[2];
+        }
+        if(mess == ''){
+            //user.userId = user.id;
+            this.navCtrl.push(DialogPage, {
+                user: this.user
+            });
+        }else{
+            let toast = this.toastCtrl.create({
+                message: mess,
+                duration: 5000
+            });
+            toast.present();
+        }
     }
 
-    addFavorites(user) {
+    addFavorites() {
 
         //console.log(JSON.stringify(user));
 
-        if (user.isAddFavorite == false) {
-            user.isAddFavorite = true;
+        if (this.user.isFav == '0') {
+            this.user.isFav = '1';
 
 
             let params = JSON.stringify({
                 list: 'Favorite'
             });
 
-            this.api.http.post(this.api.url + '/user/managelists/favi/1/'+ user.id, params, this.api.setHeaders(true)).subscribe(data => {
+            this.api.http.post(this.api.url + '/user/managelists/favi/1/'+ this.user.id, params, this.api.setHeaders(true)).subscribe(data => {
                 let res:any = data;
                 let toast = this.toastCtrl.create({
                     message: res.success,
@@ -77,24 +92,26 @@ export class FullScreenProfilePage {
         }
     }
 
-    addLike(user) {
-        user.isAddLike = true;
-        let toast = this.toastCtrl.create({
-            message: ' עשית לייק ל' + user.username,
-            duration: 2000
-        });
+    addLike() {
+        if(this.user.isLike == '0') {
+            this.user.isLike = '1';
+            let toast = this.toastCtrl.create({
+                message: ' עשית לייק ל' + this.user.userNick,
+                duration: 2000
+            });
 
-        toast.present();
+            toast.present();
 
-        let params = JSON.stringify({
-            toUser: user.id,
-        });
+            let params = JSON.stringify({
+                toUser: this.user.id,
+            });
 
-        this.api.http.post(this.api.url + '/api/v1/likes/' + user.id, params, this.api.setHeaders(true)).subscribe(data => {
-            console.log(data);
-        }, err => {
-            console.log("Oops!");
-        });
+            this.api.http.post(this.api.url + '/likes/' + this.user.id, params, this.api.setHeaders(true)).subscribe(data => {
+                console.log(data);
+            }, err => {
+                console.log("Oops!");
+            });
+        }
     }
 
     ionViewWillEnter() {

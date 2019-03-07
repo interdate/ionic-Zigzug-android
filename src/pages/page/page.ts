@@ -34,7 +34,7 @@ export class Page {
                 console.log('register: ', err);
                 this.page = {
                     title: 'Page Error',
-                    content: err._body
+                    content: err.error
                 };
                 $('#content').html(this.page.pageText);
                 this.api.hideLoad();

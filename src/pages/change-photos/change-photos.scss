@@ -17,6 +17,7 @@ page-change-photos {
     background-position: center;
     width: 100%;
     height: 100%;
+    z-index: 10000;
   }
 
   .description ul {
@@ -41,6 +42,7 @@ page-change-photos {
     padding: 3px;
     border-radius: 2px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    z-index: 10;
   }
 
   .main {
@@ -67,5 +69,43 @@ page-change-photos {
   .add {
     color: white;
     background: red;
+  }
+
+  .stepnum ul {
+    overflow: hidden;
+    margin-top: 0;
+  }
+  .stepnum li {
+    float: left;
+    width: 33.3%;
+  }
+
+  .stepnum li span {
+    background: #ff2b42;
+    border-radius: 22px;
+    width: 4rem;
+    height: 4rem;
+    display: block;
+    margin: 0 auto;
+    line-height: 4rem;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .stepnum li p {
+    text-align: center;
+  }
+
+  .stepnum li.active span {
+    border: 4px solid;
+    line-height: 3rem;
+  }
+  #description{
+    clear: both;
+    padding-top: 10px;
+  }
+  .hidden{
+    display: none;
   }
 }
