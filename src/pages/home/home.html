@@ -72,7 +72,6 @@
               <div>{{texts.like}}</div>
               <!--Like-->
             </div>
-<<<<<<< HEAD
             <div *ngIf="!blocked_img && user.isFav == '1'" class="btn"
                  (click)=addFavorites(user)>
               <li id="remove-green"></li>
@@ -81,10 +80,7 @@
 
             <div *ngIf="!blocked_img && user.isFav == '0'" class="btn"
                  (click)=addFavorites(user)>
-=======
-            <div *ngIf="!blocked_img" class="btn" [ngClass]="{'disabled': user.isFav == '1' }"
-                 (click)=addFavorites(user,i)>
->>>>>>> 8e0a97e2d9ad800415f0172c541dd17f509e1bfa
+
               <li id="add-green"></li>
               <div>{{texts.add}}</div>
             </div>
