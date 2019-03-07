@@ -1,15 +1,27 @@
 page-select {
   ion-header{
-    background-color: #eee;
+    background-color: #000;
   }
   ion-content.content{
-    background-color: #fff;
+    //background-color: #fff;
+    background-color: #dbdbd2;
   }
   .bar-buttons-ios {
     margin-top: 0;
   }
+  .bar-button-default-md, .toolbar-title{
+    color: #fff;
+  }
+  ion-title{
+    line-height: 32px;
+    padding-left: 54px;
+  }
+  ion-buttons{
+    float: right;
+  }
   ion-item.item{
-    background-color: #fff;
+    //background-color: #fff;
+    background-color: #dbdbd2;
     border-top: 1px solid #cccccc;
     border-bottom: 1px solid #cccccc;
   }
@@ -29,5 +41,20 @@ page-select {
   .searchbar-md .searchbar-clear-icon{
     left: 13px;
     right: auto;
+  }
+
+  span.she{
+    margin-left: 10px;
+    background: url('../assets/img/she.png') no-repeat;
+    background-position: left center;
+    background-size: auto 15px;
+    padding: 0px 6px;
+  }
+  span.he{
+    margin-left: 10px;
+    background: url('../assets/img/he.png') no-repeat;
+    background-position: left center;
+    background-size: auto 15px;
+    padding: 0px 6px;
   }
 }

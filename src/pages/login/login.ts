@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, LoadingController, ToastController, AlertController} from 'ionic-angular';
 import {HomePage} from "../home/home";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
@@ -9,6 +9,10 @@ import {ApiProvider} from "../../providers/api/api";
 import {HttpHeaders} from "@angular/common/http";
 import {RegisterPage} from "../register/register";
 import {PasswordRecoveryPage} from "../password-recovery/password-recovery";
+import {SubscriptionPage} from "../subscription/subscription";
+import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+import { Keyboard } from 'ionic-angular';
+
 
 /**
  * Generated class for the LoginPage page.
@@ -30,34 +34,54 @@ export class LoginPage {
     user: any = {id: '', name: ''};
     fingerAuth: any;
     enableFingerAuth: any;
-    disableFingerAuthInit: any;
+    setEnableFingerAuth: any;
 
     constructor(
           public navCtrl: NavController,
           public navParams: NavParams,
           public api: ApiProvider,
           public loadingCtrl: LoadingController,
-          public toastCtrl: ToastController//,
-          //private androidFingerprintAuth: AndroidFingerprintAuth
+          public toastCtrl: ToastController,
+          public alertCtrl: AlertController,
+          private faio: FingerprintAIO,
+          private keyboard: Keyboard
     ) {
+
+        this.api.storage.get('faio').then((val: any) => {
+            if(val){
+                this.enableFingerAuth = (typeof val.isAvailable != 'undefined') ? val.isAvailable : 0;
+                this.fingerAuth = (typeof val.password != 'undefined') ? true : false;
+                this.setEnableFingerAuth = (typeof val.setEnableFingerAuth != 'undefined') ? Boolean(parseInt(val.setEnableFingerAuth)) : true;
+            }else{
+                this.fingerAuth = false;
+                this.enableFingerAuth = 0;
+                this.setEnableFingerAuth = true;
+            }
+        }).catch((error: any) => {
+            this.fingerAuth = false;
+            this.enableFingerAuth = 0;
+        });
 
         this.api.http.get(api.url + '/user/form/login/', api.setHeaders(false)).subscribe(data => {
             this.form = data;
-            this.api.storage.get('username').then((username) => {
-                this.form.login.username.value = username;
-                this.user.name = username;
-            });
-
-
-            let that = this;
-            setTimeout(function () {
-                that.api.storage.get('fingerAuth').then((val) => {
-                    //alert(val);
-                    if (val) {
-                        that.fingerAuth = val;
+            if(navParams.get('login') && this.api.status != 'block'){
+                this.api.setHeaders(false, null, null);
+                // Removing data storage
+                this.api.storage.remove('user_data');
+                //this.api.storage.remove('faio');
+                var login = navParams.get('login');
+                this.form.login.password.value = login.password;
+                this.form.login.username.value = this.user.name = login.username;
+                this.formSubmit();
+            }else {
+                this.api.storage.get('username').then((username) => {
+                    if (username) {
+                        this.form.login.username.value = username;
+                        this.user.name = username;
                     }
                 });
-            }, 10);
+            }
+            this.api.storage.remove('fingerAuth');
 
         });
 
@@ -66,14 +90,27 @@ export class LoginPage {
           this.api.setHeaders(false, null, null);
           // Removing data storage
           this.api.storage.remove('user_data');
+          this.api.storage.remove('faio');
+          this.api.myId = null;
           //this.storage.remove('password');
           //this.storage.remove('user_id');
           //this.storage.remove('user_photo');
         }
 
         if(navParams.get('error')){
-          this.errors = navParams.get('error');
+            console.log('Login Error: ' + navParams.get('error'));
+            this.api.setHeaders(false, null, null);
+            // Removing data storage
+            this.api.storage.remove('user_data');
+            this.api.storage.remove('faio');
+            this.errors = navParams.get('error');
         }
+        if(this.api.status == 'block' && this.api.errorMess != ''){
+            this.errors = this.api.errorMess;
+        }
+        //alert(this.keyboard.isVisible);
+
+
     }
 
     formSubmit() {
@@ -94,14 +131,15 @@ export class LoginPage {
         this.api.http.post(this.api.url + '/user/login/', '', this.setHeaders(username,password)).subscribe(data => { //.map((res: Response) => res.json())
 
             setTimeout(function () {
-                this.errors = 'משתמש זה נחסם על ידי הנהלת האתר';
+                //this.errors = 'משתמש זה נחסם על ידי הנהלת האתר';
             }, 300);
 
             this.validate(data);
 
         }, err => {
             //console.log(err.status);
-            this.errors = err.text();
+            //alert(JSON.stringify(err))
+            this.errors = err.error;
         });
     }
 
@@ -119,136 +157,124 @@ export class LoginPage {
         return this.header;
     }
 
-    // fingerAuthentication(data) {
-    //
-    //     if (typeof data.status == 'undefined') {
-    //         data = {status: 'login', username: this.form.login.username.value}
-    //     }
-    //
-    //     //alert('test: '+ JSON.stringify(data));
-    //     this.api.storage.get('enableFingerAuth').then((enableFingerAuth) => {
-    //
-    //         if (enableFingerAuth && enableFingerAuth == 1) {
-    //             this.enableFingerAuth = 1;
-    //         } else {
-    //             this.enableFingerAuth = 0;
-    //         }
-    //     });
-    //
-    //     this.api.storage.get('disableFingerAuthInit').then((disableFingerAuthInit) => {
-    //
-    //         if (disableFingerAuthInit && disableFingerAuthInit == 1) {
-    //             this.disableFingerAuthInit = 1;
-    //         } else {
-    //             this.disableFingerAuthInit = 0;
-    //         }
-    //     });
-    //
-    //     this.api.storage.get('fingerAuth').then((val) => {
-    //
-    //         if ((data.status == 'init' && !val && this.disableFingerAuthInit == 0) || (this.enableFingerAuth == 1 && !val )) {
-    //
-    //             this.androidFingerprintAuth.isAvailable()
-    //                 .then((result)=> {
-    //
-    //                     if (result.isAvailable) {
-    //
-    //                         //alert(JSON.stringify(data));
-    //                         // it is available
-    //                         this.androidFingerprintAuth.encrypt({
-    //                             clientId: 'com.interdate.zigzug',
-    //                             username: data.username,
-    //                             password: data.password,
-    //                             dialogTitle: 'כניסה לשידייט באמצעות טביעת אצבע',
-    //                             dialogMessage: 'אשרי טביעת אצבע כדי להמשיך',
-    //                             dialogHint: 'חיישן מגע'
-    //                         })
-    //                             .then(result => {
-    //
-    //                                 this.api.storage.set('fingerAuthLogin', data.username);
-    //                                 if (result.withFingerprint) {
-    //                                     //alert('Successfully encrypted credentials.');
-    //                                     //alert('Encrypted credentials: ' + result.token);
-    //                                     this.api.storage.set('fingerAuth', result.token);
-    //
-    //                                 } else if (result.withBackup) {
-    //                                     //alert('Successfully authenticated with backup password!');
-    //                                     //alert('Encrypted credentials: ' + result.token);
-    //                                     this.api.storage.set('fingerAuth', result.token);
-    //
-    //                                 } else alert('Didn\'t authenticate!');
-    //
-    //                             })
-    //                             .catch(error => {
-    //                                 //alert(JSON.stringify(error))
-    //                                 this.api.storage.set('disableFingerAuthInit', '1');
-    //                             });
-    //
-    //                     } else {
-    //                         // fingerprint auth isn't available
-    //                     }
-    //                 })
-    //                 .catch(error => console.error(error));
-    //         } else if (val && data.status == 'login') {
-    //             this.androidFingerprintAuth.isAvailable()
-    //                 .then((result)=> {
-    //                     if (result.isAvailable) {
-    //                         this.androidFingerprintAuth.decrypt({
-    //                             clientId: 'com.interdate.zigzug',
-    //                             //username: data.username,
-    //                             token: val,
-    //                             dialogTitle: 'כניסה לזיגזוג באמצעות טביעת אצבע',
-    //                             locale: "hb",
-    //                             dialogMessage: 'אשרי טביעת אצבע כדי להמשיך',
-    //                             dialogHint: 'חיישן מגע'
-    //                         }).then(result => {
-    //                             //alert('token: '+ val + 'decrypt:'+ JSON.stringify(result));
-    //                             //alert('password'+ JSON.stringify(result.password));
-    //                             //alert(JSON.stringify(result));
-    //                             this.api.storage.get('fingerAuthLogin').then((val) => {
-    //                                 this.user.name = val;
-    //                                 this.form.login.password.value = result.password;
-    //                                 this.formSubmit();
-    //                             });
-    //
-    //                         }).catch(error => {
-    //                             this.api.storage.remove('fingerAuth');
-    //                             this.api.storage.remove('enableFingerAuth');
-    //                             this.api.storage.remove('disableFingerAuthInit');
-    //                             this.api.storage.remove('fingerAuthLogin');
-    //                             this.navCtrl.popToRoot();
-    //                         });
-    //                     }
-    //                 });
-    //         }
-    //     });
-    // }
+
+    setFaio(){
+        var that = this;
+        if(typeof this.enableFingerAuth == 'undefined'){
+            setTimeout(function () {
+                that.setFaio();
+            },500);
+        }else {
+            this.api.storage.get('faio').then((val:any)=>{
+                if(val){
+                    if(typeof val.username != 'undefined') {
+                        if (val.username != this.form.login.username.value) {
+                            this.api.storage.set('faio', {
+                                isAvailable: 1,
+                                setEnableFingerAuth: this.setEnableFingerAuth,
+                                username: this.form.login.username.value,
+                                password: this.form.login.password.value
+                            });
+                        }
+                    }
+                }
+            });
+            if (this.enableFingerAuth === 0) {
+                this.faio.isAvailable().then((result: any) => {
+                    this.enableFingerAuth = 1;
+                    this.api.storage.set('faio', {
+                        isAvailable: 1,
+                        setEnableFingerAuth: this.setEnableFingerAuth
+                    });
+                    this.faio.show({
+                        clientId: 'zigzug-faio',
+                        clientSecret: this.form.login.password.value, //Only necessary for Android
+                        disableBackup: true  //Only for Android(optional)
+                    }).then((result: any) => {
+                        this.api.storage.set('faio', {
+                            isAvailable: 1,
+                            setEnableFingerAuth: this.setEnableFingerAuth,
+                            username: this.form.login.username.value,
+                            password: this.form.login.password.value
+                        });
+                        this.fingerAuth = true;
+                    })
+                        .catch((error: any) => {
+                            this.fingerAuth = false;
+                        });
+                }).catch((error: any) => {
+                    this.api.storage.remove('faio');
+                    this.enableFingerAuth = 0;
+                });
+            }
+        }
+    }
+
+
+    useFaio(){
+        var that = this;
+        if(typeof this.fingerAuth == 'undefined'){
+            setTimeout(function () {
+                that.useFaio();
+            },500);
+        }else {
+            if (this.fingerAuth) {
+                this.api.storage.get('faio').then((val: any) => {
+                    if (val) {
+                        if (typeof val.password == 'undefined') {
+                            this.setFaio();
+                        } else {
+                            this.faio.show({
+                                clientId: 'zigzug-faio',
+                                clientSecret: val.password, //Only necessary for Android
+                                disableBackup: true  //Only for Android(optional)
+                            }).then((result: any) => {
+                                this.form.login.password.value = val.password;
+                                this.form.login.username.value = val.username
+                                this.formSubmit();
+                            }).catch((error: any) => {
+                                this.setFaio();
+                            });
+                        }
+                    } else {
+                        setTimeout(function () {
+                            that.useFaio();
+                        }, 500);
+                    }
+                });
+            } else {
+                this.setFaio();
+            }
+        }
+    }
+
 
     validate(response) {
 
-        if (response.status != "not_activated") {
+        //if (response.status != "not_activated") {
             this.api.storage.set('user_data',{
                 username: this.form.login.username.value,
                 password: this.form.login.password.value,
                 status: response.status,
                 user_id: response.id,
-                user_photo: response.photo
+                user_photo: response.photo,
+                userIsPaying: response.userIsPaying
             });
-             this.api.storage.set('username', this.form.login.username.value);
+            this.api.myId = response.id;
+            this.api.storage.set('username', this.form.login.username.value);
             // this.api.storage.set('password', this.form.login.password.value);
             // this.api.storage.set('status', response.status);
             // this.api.storage.set('user_id', response.id);
             // this.api.storage.set('user_photo', response.photo);
 
             this.api.setHeaders(true, this.form.login.username.value, this.form.login.password.value);
-        }
+            //if(!this.navParams.get('login')) {
+                //this.setFaio();
+                this.api.fAllInOne({username: this.form.login.username.value, password: this.form.login.password.value});
+                this.api.sendBrowserPhoneId();
+            //}
+        //}
         if (response.status == "login") {
-            // let data = {
-            //     status: 'init',
-            //     username: this.form.login.username.value,
-            //     password: this.form.login.password.value
-            // };
-            // this.fingerAuthentication(data);
 
             this.api.storage.set('user_photo', response.photo);
             this.navCtrl.setRoot(HomePage, {
@@ -273,14 +299,35 @@ export class LoginPage {
                 password: this.form.login.password.value
             });
         } else if (response.status == "not_activated") {
-            let toast = this.toastCtrl.create({
-                message: response.texts.notActiveMessage,
-                showCloseButton: true,
-                closeButtonText: 'אישור'
-            });
-            toast.present();
+            // let toast = this.toastCtrl.create({
+            //     message: response.texts.notActiveMessage,
+            //     showCloseButton: true,
+            //     closeButtonText: 'אישור'
+            // });
+            // toast.present();
+            if((this.api.notActivateAlert == null || this.api.notActivateAlert == undefined)) {
+                this.api.notActivateAlert = this.alertCtrl.create({
+                    title: response.texts.notActiveTitleMess,
+                    message: response.texts.notActiveMessage,
+                    buttons: [
+                        {
+                            text: response.texts.notActiveButton,
+                            role: 'cancel',
+                            handler: () => {
+                                console.log('Cancel clicked');
+                                this.api.notActivateAlert = undefined;
+                            }
+                        }
+                    ]
+                });
+                this.api.notActivateAlert.present();
+            }
             this.navCtrl.push('LoginPage');
+        } else if (response.status == "toPay") {
+            this.navCtrl.setRoot(SubscriptionPage);
+            this.navCtrl.popToRoot();
         }
+
         this.api.storage.get('deviceToken').then((deviceToken) => {
             this.api.sendPhoneId(deviceToken);
         });

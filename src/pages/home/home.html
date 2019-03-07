@@ -27,15 +27,24 @@
 
 
 <ion-content class="has-header page-hello-ionic">
-  <div class="no_results" *ngIf="users?.length == 0">אין תוצאות</div>
-  <ion-list [virtualScroll]="users" [approxItemHeight]="'160px'" [approxItemWidth]="'calc(50% - 10px)'" [bufferRatio]="5">
-    <ion-card *virtualItem="let user" class="usr_profile" ion-item > <!-- *ngFor="let user of users" -->
+
+  <!--<ion-list [virtualScroll]="users" [approxItemHeight]="'160px'" [approxItemWidth]="'calc(50% - 10px)'" [bufferRatio]="5">-->
+    <ion-list>
+      <div class="freeTodayButtons" *ngIf="params.searchparams?.freeToday == 1">
+        <button (click)="approveSubmit()" color="dark" class="report-abuse" icon-right ion-button>
+          <img class="" src="assets/img/free_today.png" style="float:right;height: 100%;margin-right: -12px;">
+          {{ user?.freeToday == '0' ? 'הצטרף לפנויים היום': 'הסר מפנויים היום'}}
+        </button>
+      </div>
+      <div class="no_results" *ngIf="users?.length == 0">אין תוצאות</div>
+    <ion-card *ngFor="let user of users; let i = index" class="usr_profile" ion-item > <!--  *virtualItem="let user"-->
       <div *ngIf="user.isPaing == '1'" class="king" ></div><!-- *ngIf="user.isPays == true" -->
       <div class="user-section">
         <div *ngIf="user.isOnline == '1'" class="online"></div>
         <div *ngIf="user.isNew == '1'" class="new-user"></div>
         <div *ngIf="user.isPaying == '1'" class="paying"></div>
-        <div (click)="itemTapped(user)" [ngStyle]="{ 'background-image': 'url(' + user.photo.replace('h_600,w_600','h_200,w_200') + ')'}"
+        <div *ngIf="user?.isApproved == '1'" class="approve"></div>
+        <div (click)="itemTapped(user)" [ngStyle]="{ 'background-image': 'url(' + (api.testingMode ? ('https://www.zigzug.co.il/images/users/large/' + user.userGender + '.jpg') : user.photo) + ')'}"
              class="avatar"></div>
 
         <!-- <div *ngIf="user.photo != '/images/no_photo_2.jpg' && user.photo != '/images/no_photo_1.jpg'" (click)="itemTapped(user)" [ngStyle]="{ 'background-image': 'url(' + user.photo + ')'}"
@@ -44,24 +53,26 @@
           <ion-card-title (click)="itemTapped(user)">
             <div class="row">
               <span class="name" [ngClass]="{'long-name': user.nickName?.length >= 12 }">{{user.nickName}},</span>
+
               <span class="age">{{user.age}}</span>
             </div>
             <div class="row">
-              <span class="location" [ngClass]="{'long-city': user.userCity?.length >= 10 }">{{user.userCity}}</span>
+              <span class="location" [ngClass]="{'long-city': user.city?.length >= 10 }">{{user.city}}</span>
               <span class="distance">{{ user.distance }}</span>
             </div>
           </ion-card-title>
-          <ul class="profile-btn">
-            <div class="btn" (click)=toDialog(user)>
+          <ul class="profile-btn" [ngClass]="{'adw':user.commercial == '1'}">
+            <div class="btn" [ngClass]="{'disabled': user.id == api.myId }" (click)=toDialog(user)>
               <li id="mobmsg"></li>
               <div>{{texts.message}}</div>
             </div>
-            <div class="btn" [ngClass]="{'disabled': user.isLike == '1' }" (click)="addLike(user)">
+            <div class="btn" [ngClass]="{'disabled': user.isLike == '1' }" (click)="addLike(user,i)">
               <!--Message-->
               <li id="like-red"></li>
               <div>{{texts.like}}</div>
               <!--Like-->
             </div>
+<<<<<<< HEAD
             <div *ngIf="!blocked_img && user.isFav == '1'" class="btn"
                  (click)=addFavorites(user)>
               <li id="remove-green"></li>
@@ -70,11 +81,15 @@
 
             <div *ngIf="!blocked_img && user.isFav == '0'" class="btn"
                  (click)=addFavorites(user)>
+=======
+            <div *ngIf="!blocked_img" class="btn" [ngClass]="{'disabled': user.isFav == '1' }"
+                 (click)=addFavorites(user,i)>
+>>>>>>> 8e0a97e2d9ad800415f0172c541dd17f509e1bfa
               <li id="add-green"></li>
               <div>{{texts.add}}</div>
             </div>
 
-            <div *ngIf="params.list == 'fav'" class="btn blocked" (click)=unFavorites(user)>
+            <div *ngIf="params.list == 'fav'" class="btn blocked" (click)=unFavorites(user,i)>
               <li id="cap"></li>
               <div>{{texts.remove}}</div>
             </div>
@@ -91,7 +106,7 @@
       </div>
     </ion-card>
   </ion-list>
-  <div *ngIf="loader == true" class="loader"><img src="assets/img/loader.gif"></div>
+  <div *ngIf="loader == true || showLoader == true" class="loader"><img src="assets/img/loader.gif"></div>
   <ion-infinite-scroll #scroll threshold="400px" (ionInfinite)="moreUsers($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>

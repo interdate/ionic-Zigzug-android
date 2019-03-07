@@ -34,12 +34,18 @@ import {DialogPageModule} from "../pages/dialog/dialog.module";
 import {ChangePhotosPageModule} from "../pages/change-photos/change-photos.module";
 import {RegisterPageModule} from "../pages/register/register.module";
 import {Camera} from "@ionic-native/camera";
-import {FileTransfer} from "@ionic-native/file-transfer";
+import { FileTransfer } from "@ionic-native/file-transfer";
 import { File } from '@ionic-native/file';
 import {ImagePicker} from "@ionic-native/image-picker";
 import {Media} from "@ionic-native/media";
 import {Device} from "@ionic-native/device";
-
+import {SubscriptionPageModule} from "../pages/subscription/subscription.module";
+import {FingerprintAIO} from "@ionic-native/fingerprint-aio";
+import {InAppBrowser} from "@ionic-native/in-app-browser";
+import { AngularFireModule } from 'angularfire2';
+import 'firebase/messaging'; // only import firebase messaging or as needed;
+import { firebaseConfig } from '../environment';
+import { FirebaseMessagingProvider } from '../providers/firebase-messaging';
 
 @NgModule({
     declarations: [
@@ -49,7 +55,10 @@ import {Device} from "@ionic-native/device";
     imports: [
         BrowserModule,
         HttpClientModule,
-        IonicModule.forRoot(MyApp),
+        IonicModule.forRoot(MyApp,{
+            menuType: 'overlay'
+        }),
+        AngularFireModule.initializeApp(firebaseConfig),
         IonicStorageModule.forRoot(),
         LoginPageModule,
         ArenaPageModule,
@@ -69,7 +78,8 @@ import {Device} from "@ionic-native/device";
         InboxPageModule,
         DialogPageModule,
         ChangePhotosPageModule,
-        RegisterPageModule
+        RegisterPageModule,
+        SubscriptionPageModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [
@@ -90,7 +100,10 @@ import {Device} from "@ionic-native/device";
         File,
         ImagePicker,
         Media,
-        Device
+        Device,
+        FingerprintAIO,
+        InAppBrowser,
+        FirebaseMessagingProvider
     ]
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {ApiProvider} from "../../providers/api/api";
 import {DialogPage} from "../dialog/dialog";
 
@@ -24,8 +24,9 @@ export class InboxPage {
       page: 1
     };
     loader:any = true;
+    textMess: any;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public api: ApiProvider, public toastCtrl: ToastController) {
         this.api.showLoad();
         this.api.http.get(this.api.url + '/user/contacts/perPage:' + this.prop.perPage + '/page:' + this.prop.page, this.api.setHeaders(true)).subscribe(data => {
             let res:any = data;
@@ -33,6 +34,7 @@ export class InboxPage {
                 this.loader = false;
             }
             //this.users = res.allChats;
+            this.textMess = res.texts;
             this.users = [];
             for (let person of res.allChats) {
                 if(person.visibleMessagesNumber > 0){
@@ -55,6 +57,7 @@ export class InboxPage {
 
             this.api.http.get(this.api.url + '/user/contacts/perPage:' + this.prop.perPage + '/page:' + this.prop.page, this.api.setHeaders(true)).subscribe(data => {
                 let res: any = data;
+                this.textMess = res.texts;
                 if (res.allChats.length < this.prop.perPage) {
                     this.loader = false;
                 }
@@ -83,6 +86,24 @@ export class InboxPage {
     }
 
     toDialogPage(user) {
-        this.navCtrl.push(DialogPage, {user: user.user});
+        var mess = '';
+        if(user.user.isAllowedToSend == '1'){
+            mess = this.textMess.chatErrorsMess[1];
+        }else if(user.user.isAllowedToSend == '2'){
+            mess = this.textMess.chatErrorsMess[2];
+        }
+        if(mess == ''){
+            //user.userId = user.id;
+            this.navCtrl.push(DialogPage, {
+                user: user.user
+            });
+        }else{
+            let toast = this.toastCtrl.create({
+                message: mess,
+                duration: 5000
+            });
+            toast.present();
+        }
+
     }
 }

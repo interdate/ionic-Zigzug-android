@@ -13,9 +13,27 @@
 </ion-header>
 
 <ion-content padding>
-  <!--<div class="description" *ngIf="photos?.length == 1 && dataPage.noPhoto == dataPage.photos[0].face">
-      <div #desk>{{safeHtml(desk)}}</div>
-  </div>-->
+  <div class="stepnum">
+    <ul>
+      <li tappable (click)="getStep(1)"
+          class="rgt"><span>1</span>
+        <!--<p>{{ form?.text?.title1 }}</p>-->
+      </li>
+      <li tappable (click)="getStep(2)">
+        <span>2</span>
+        <!--<p>{{ form?.text?.title2 }}</p>-->
+      </li>
+      <li tappable (click)="getStep(3)" class="lft active">
+        <span>3</span>
+        <!--<p>{{ form?.text?.title3 }}</p>-->
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="photos?.length == 0" id="description" [innerHTML]="description">
+    <!--{{ setHtml('description') }}-->
+  </div>
+
   <div class="photos">
     <div *ngFor="let photo of photos">
       <div *ngIf="photo.main == '1'" class="main photo"
@@ -47,7 +65,7 @@
     <div *ngIf="photos?.length > 0 && photos?.length < 4" class="photo" tappable (click)="add()">
       <div class="wrap">
         <div class="photo-img"
-             [ngStyle]="{ 'background-image': 'url(' + 'https://www.shedate.co.il/images/users/large/0.jpg' + ')'}"></div>
+             [ngStyle]="{ 'background-image': 'url(' + dataPage.images.noPhoto + ')'}"></div>
         <span class="add"><ion-icon name="md-add"></ion-icon></span>
       </div>
     </div>
@@ -57,11 +75,25 @@
          tappable (click)="add()">
       <div class="wrap">
         <div class="photo-img"
-             [ngStyle]="{ 'background-image': 'url('+'https://www.shedate.co.il/images/users/large/0.jpg' + ')'}"></div>
+             [ngStyle]="{ 'background-image': 'url(' + dataPage.images.noPhoto + ')'}"></div>
 
         <span class="add"><ion-icon name="md-add"></ion-icon></span>
       </div>
     </div>
+  </div>
+
+  <div class="hidden">
+    <form name='upimg' id="img_form1" method="post" action="uploadimg.php" enctype="multipart/form-data" accept-charset="UTF-8">
+      <input type="hidden" name="load" id="imgLoad" [(ngModel)]="imgLoad">
+      <input type="hidden" name="userId" value="{{ userId }}" />
+      <input type="hidden" name="act" value="getImg" />
+      <input type="file" id="fileLoader" #fileLoader name="file" title="Load File" hidden (change)="uploadPhotoInput(fileLoader)" accept="image/*" />
+      <input id='imgsub1' style='display: none;' type='submit' value='submit'/>
+    </form>
+  </div>
+
+  <div *ngIf="photos?.length > 0" id="description" [innerHTML]="description">
+    <!--{{ setHtml('description') }}-->
   </div>
 
   <div *ngIf="new_user" class="login-btn">
@@ -71,7 +103,7 @@
     <button color="danger" tappable (click)=onHomePage() ion-button block>סיום עריכה</button>
   </div>
 </ion-content>
-<ion-footer>
+<ion-footer *ngIf="!user?.register">
 
   <ion-navbar>
     <ion-title></ion-title>

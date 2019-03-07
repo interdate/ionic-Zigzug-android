@@ -19,7 +19,7 @@ page-search {
 
   .adv-search {
     background: #ffffff;
-    color: #ec649f;
+    color: #ff2b42;
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 40px;
@@ -27,5 +27,24 @@ page-search {
 
   .select-text {
     margin-top: 16px;
+  }
+
+  .select-value{
+    padding: 10px 8px 13px 16px;
+    display: flex;
+    max-width: 45%;
+    background: none;
+    float: left;
+    font-size: 16px;
+    margin-top: 13px;
+  }
+
+  .select-value + ion-label{
+    font-size: 16px;
+    padding: 10px 10px 13px 0px;
+  }
+
+  .clr{
+    clear: both;
   }
 }

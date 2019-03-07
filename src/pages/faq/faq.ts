@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {ApiProvider} from "../../providers/api/api";
 
-declare var $: any;
+import * as $ from 'jquery';
 /**
  * Generated class for the FaqPage page.
  *

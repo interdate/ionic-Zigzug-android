@@ -29,7 +29,7 @@
       <ion-card *ngIf="user?.imageUrl">
         <div class="clr"></div>
         <div  tappable (click)="toProfile()" class="pop_title"><span>{{user?.nickName}},</span> {{user?.age}} {{user?.area}}</div>
-        <div class="avatar" [ngStyle]="{ 'background-image': 'url(' + user?.imageUrl + ')'}"></div>
+        <div class="avatar" [ngStyle]="{ 'background-image': 'url(' + (api.testingMode ? ('https://www.zigzug.co.il/images/users/large/' + user.userGender + '.jpg') : user?.imageUrl) + ')'}"></div>
       </ion-card>
     </ion-slide>
 

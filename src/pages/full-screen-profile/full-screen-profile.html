@@ -13,21 +13,20 @@
 </ion-header>
 <ion-content>
   <div *ngIf="myId != user.id" class="profile-buttons">
-    <div (click)="toDialog(user)" class="message-profile-btn"><img src="assets/img/icons/pmsgbot.png"></div>
-    <div *ngIf="user.isAddLike == '0'" (click)="addLike(user)" class="like-profile-btn"><img
+    <div (click)="toDialog()" class="message-profile-btn"><img src="assets/img/icons/pmsgbot.png"></div>
+    <div [ngClass]="{'disabled': user.isLike == '1' }" (click)="addLike()" class="like-profile-btn"><img
             src="assets/img/icons/plike.png"></div>
-    <div *ngIf="user.isAddLike == '1'" class="disabled like-profile-btn"><img src="assets/img/icons/plike.png"></div>
-    <div *ngIf="user.isAddFavorite == '0' && user.id " (click)="addFavorites(user)"
+    <div *ngIf="user.isFav == '0' && user.id " (click)="addFavorites()"
          class="favorite-profile-btn">
       <img src="assets/img/icons/padd.png"></div>
-    <div *ngIf="user.isAddFavorite == '1'" class="disabled favorite-profile-btn"><img src="assets/img/icons/padd.png"></div>
+    <div *ngIf="user.isFav == '1'" class="disabled favorite-profile-btn"><img src="assets/img/icons/padd.png"></div>
   </div>
   <div class="close-warp" (click)="goBack()">
     <div class="close"><img alt="close" src="assets/img/icons/psclose.png"></div>
   </div>
   <ion-slides initialSlide="{{i}}" [loop]="user.photos.length > 1">
     <ion-slide *ngFor="let usr of user.photos">
-      <img src="{{ usr?.url }}">
+      <img src="{{ ((api.testingMode == true) ? ('https://www.zigzug.co.il/images/users/large/' + user.gender + '.jpg') : usr?.url) }}">
     </ion-slide>
 
   </ion-slides>

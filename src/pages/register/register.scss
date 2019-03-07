@@ -7,10 +7,10 @@ page-register {
     padding-bottom: 10px;
   }
 
-  .birthday ion-item {
+  .birthday ion-item.item.item-block.item-md, .birthday ion-item.item.item-block.item-ios {
     width: calc(33.33% - 4px) !important;
     float: right;
-    margin: 0 2px 12px;
+    margin: 10px 2px;
   }
 
   ion-alert .alert-button-group {
@@ -148,12 +148,12 @@ page-register {
     width: 100%;
   }
 
-  .text-input-ios {
-    width: 95%;
-  }
+  //.text-input-ios {
+  //  width: 95%;
+  //}
 
   .text-input-ios {
-    margin-left:  3%;
+    margin: 0px;
   }
 
   .edit-img {
@@ -215,7 +215,7 @@ page-register {
   }
 
   .stepnum li span {
-    background: #ec649f;
+    background: #ff2b42;
     border-radius: 22px;
     width: 4rem;
     height: 4rem;
@@ -274,9 +274,24 @@ page-register {
   }
 
   .placeholder {
-    background: #ccc;
+    background-color: #ccc;
     padding: 5px 5px;
     margin-top: 12px;
+  }
+
+  .placeholder.she{
+    padding-right: 20px;
+    background-image: url('../assets/img/she.png');
+    background-repeat: no-repeat;
+    background-position: calc(100% - 7px) center;
+    background-size: auto 15px;
+  }
+  .placeholder.he{
+    padding-right: 20px;
+    background-image: url('../assets/img/he.png');
+    background-repeat: no-repeat;
+    background-position: calc(100% - 3px) center;
+    background-size: auto 15px;
   }
 
   .input {

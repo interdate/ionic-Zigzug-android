@@ -7,7 +7,8 @@ import {Device} from "@ionic-native/device";
 import {ApiProvider} from "../../providers/api/api";
 import {ProfilePage} from "../profile/profile";
 
-declare var $: any;
+import * as $ from 'jquery';
+import {SubscriptionPage} from "../subscription/subscription";
 /**
  * Generated class for the DialogPage page.
  *
@@ -40,7 +41,7 @@ export class DialogPage {
     password: any = false;
     currentMsgPlay: any;
     isPlay: boolean = false;
-    submitBtn: any = false;
+    submitBtn: any = true;
     alert: '';
     micStatus: any = true;
     reciver_id: any;
@@ -86,22 +87,27 @@ export class DialogPage {
     }
 
     countCharacters(ev) {
-        if (ev.target.value.length > 0) {
-            this.submitBtn = true;
-        } else {
-            this.submitBtn = false;
-        }
+        this.submitBtn = true;
+        // if (ev.target.value.length > 0) {
+        //     this.submitBtn = true;
+        // } else {
+        //     this.submitBtn = false;
+        // }
     }
 
     onFocus() {
         this.content.resize();
         this.scrollToBottom();
+        //alert(this.message);
     }
 
     subscription() {
         this.api.storage.get('user_data').then((val) => {
-            val.user_id
-            //this.navCtrl.push(SubscriptionPage);
+            // if(val && val.user_id) {
+            //     //this.navCtrl.push(SubscriptionPage);
+            //     window.open('https://www.zigzug.co.il/newpayment/?userId=' + val.user_id + '&app=1', '_system');
+            // }
+            this.navCtrl.push(SubscriptionPage);
         });
     }
 
@@ -179,15 +185,17 @@ export class DialogPage {
 
         this.submitBtn = true;
 
-        if (this.alert != "") {
-            let toast = this.toastCtrl.create({
-                message: this.alert,
-                duration: 5000
-            });
-            toast.present();
-        }
+
 
         if (url != "") {
+            if (this.alert != "") {
+                let toast = this.toastCtrl.create({
+                    message: this.alert,
+                    duration: 5000
+                });
+                toast.present();
+            }
+
             let options:FileUploadOptions = {
                 fileKey: "file",
                 fileName: 'test.mp3',
@@ -206,31 +214,43 @@ export class DialogPage {
             });
 
         } else {
+            if(this.message && this.message.trim() != '') {
+                var params = JSON.stringify({
+                    message: this.message
+                });
 
-            var params = JSON.stringify({
-                message: this.message
-            });
+                this.messages.push({
+                    id: 0,
+                    date: '',
+                    from: userId,
+                    isRead: 0,
+                    text: this.message,
+                    time: '',
+                    to: this.user.id
+                });
+                this.scrollToBottom();
+                this.message = '';
 
-            this.messages.push({
-                id: 0,
-                date: '',
-                from: userId,
-                isRead: 0,
-                text: this.message,
-                time: '',
-                to: this.user.id
-            });
-            this.scrollToBottom();
-            this.message = '';
+                var userId = typeof this.user.userId != "undefined" ? this.user.userId : this.user.id;
 
-            var userId = typeof this.user.userId != "undefined" ? this.user.userId : this.user.id;
+                this.api.http.post(this.api.url + '/user/chat/' + userId, params, this.api.setHeaders(true)).subscribe(data => {
+                    let res: any = data;
+                    this.messages = res.chat.items;
+                    this.alert = res.message;
+                    if(this.alert != ""){
+                        let toast = this.toastCtrl.create({
+                            message: this.alert,
+                            duration: 5000
+                        });
+                        toast.present();
+                    }
 
-            this.api.http.post(this.api.url + '/user/chat/' + userId, params, this.api.setHeaders(true)).subscribe(data => {
-                let res:any = data;
-                this.messages = res.chat.items;
-                this.sendPush();
-                this.countNewMess = res.chat.newMess;
-            });
+                    if(this.alert == "") {
+                        this.sendPush();
+                    }
+                    this.countNewMess = res.chat.newMess;
+                });
+            }
         }
     }
 
@@ -386,7 +406,6 @@ export class DialogPage {
 
     getNewMessages() {
 
-        //alert(this.api.url + '/user/chat/' + this.reciver_id + '/' + this.contactCurrentReadMessagesNumber + '/' + this.countNewMess + '/refresh');
         this.api.http.get(this.api.url + '/user/chat/' + this.reciver_id + '/' + this.contactCurrentReadMessagesNumber + '/' + this.countNewMess + '/refresh', this.api.setHeaders(true)).subscribe(data => {
             let res:any = data;
             this.contactCurrentReadMessagesNumber = res.contactCurrentReadMessagesNumber;
@@ -394,6 +413,17 @@ export class DialogPage {
                 this.messages = res.chat.items;
                 this.countNewMess = res.chat.newMess;
                 this.api.hideLoad();
+                // if(this.alert != res.message){
+                //     this.alert = res.message;
+                //     if (this.alert != "") {
+                //         let toast = this.toastCtrl.create({
+                //             message: this.alert,
+                //             duration: 3000
+                //         });
+                //         toast.present();
+                //     }
+                // }
+
 
                 if (res.chat.abilityReadingMessages == 1) {
                     this.countNewMess = 0;
@@ -424,32 +454,13 @@ export class DialogPage {
             message: 'ok-1990234'
         });
 
-        this.api.http.post(this.api.url + '/api/v1/sends/' + this.user.id + '/messages', params, this.api.setHeaders(true)).subscribe(data => {
+        this.api.http.post(this.api.url + '/sends/' + this.user.id + '/messages', params, this.api.setHeaders(true)).subscribe(data => {
         });
     }
 
     readMessagesStatus() {
-        //alert(this.notReadMessage.length);
         if (this.notReadMessage.length > 0) {
-            /*var params = JSON.stringify({
-                 messages: this.notReadMessage
-             });
 
-
-             this.api.http.post(this.api.url + '/api/v1/checks/messages', params, this.api.setHeaders(true)).subscribe(data => {
-                 let res:any = data;
-                 for (let i = 0; i < this.messages.length; i++) {
-                     //if (res.readMessages.indexOf(this.messages[i].id) !== '-1') {
-                     //this.messages[i].isRead = 1;
-                     //}
-                 }
-                 for (let e = 0; this.notReadMessage.length; e++) {
-                     //if (res.readMessages.indexOf(this.notReadMessage[e]) !== '-1') {
-                     //delete this.notReadMessage[e];
-                     //}
-                 }
-             });
-             */
         }
     }
 
@@ -491,9 +502,12 @@ export class DialogPage {
     ionViewDidLoad() {
 
         var that = this;
+        if(typeof this.check != 'undefined'){
+            clearInterval(this.checkChat);
+        }
         this.checkChat = setInterval(function () {
             that.getNewMessages();
-        }, 10000);
+        }, 9000);
 
         $('button').click(function () {
             // clean textareaa after submit

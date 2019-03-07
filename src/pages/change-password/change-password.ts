@@ -43,7 +43,7 @@ export class ChangePasswordPage {
             }
         });
 
-        this.api.http.post(this.api.url + '/passwords', params, this.api.header).subscribe(data => {
+        this.api.http.post(this.api.url + '/passwords', params, this.api.setHeaders(true)).subscribe(data => {
             let res: any = data;
             this.validate(res);
         });
@@ -66,6 +66,12 @@ export class ChangePasswordPage {
                 this.api.storage.set('user_data', val);
             });
             //this.api.storage.set('password', this.form.form.password.first.value);
+
+            if(typeof this.api.faioData.username != 'undefined' && typeof this.api.faioData.password != 'undefined'){
+                this.api.faioData.password = this.form.form.password.first.value;
+                this.api.storage.set('fingerAIO', this.api.faioData);
+            }
+
 
             this.form.form.password.first.value = "";
             this.form.form.password.second.value = "";

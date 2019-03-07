@@ -26,3 +26,31 @@ function setSelect2(selector,options) {
     });
 
 }
+
+function formInitById(selector) {
+    jQuery(document).ready(function() {
+        jQuery(selector).ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function(){
+                //pageObj.api.showLoad();
+            },
+            success: function(data) {
+                //pageObj.getPageData();
+                //console.log(JSON.stringify(data));
+                //alert(1);
+                //pageObj.api.hideLoad();
+                jQuery('#imgLoad').val('0');
+            },
+            error: function (err) {
+                //alert(2);
+                //console.log(JSON.stringify(err));
+                //pageObj.api.hideLoad();
+                jQuery('#imgLoad').val('0');
+            }
+        });
+    });
+}
+
+function submitForm(selector) {
+    jQuery(selector).submit();
+}

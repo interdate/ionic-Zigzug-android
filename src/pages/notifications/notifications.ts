@@ -50,7 +50,7 @@ export class NotificationsPage {
 
             if( bingo == 1) {
                 this.navCtrl.push(DialogPage, {
-                    user: {'id': user_id }
+                    user: {'id': user_id, 'userId': user_id }
                 });
             }else {
                 this.navCtrl.push(ArenaPage, {

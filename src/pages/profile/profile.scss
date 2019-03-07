@@ -17,6 +17,18 @@ page-profile {
     top: 28px;
     z-index: 999;
   }
+
+  .approve-user{
+    background: url(https://www.zigzug.co.il/images/icons/approved.png) no-repeat;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background-size: cover;
+    right: 6px;
+    top: 24px;
+    z-index: 999999;
+  }
+
   .profile {
     background-position: center;
     background-size: 100%;
@@ -42,22 +54,29 @@ page-profile {
     display: block;
     clear: both;
   }
+
+  .distance{
+    float: left;
+    position: relative;
+    margin-top: -17px;
+  }
+
   .pmbotul {
     font-size: 12px;
     position: relative;
   }
-  .pmbotul li .one {
-    font-weight: bold;
-    width: 115px;
-    display: table-cell;
-  }
-
-  .pmbotul li .two {
-    //display: block;
-    //width: 57%;
-    //float: left;
-    display: table-cell;
-  }
+  //.pmbotul li .one {
+  //  font-weight: bold;
+  //  width: 115px;
+  //  display: table-cell;
+  //}
+  //
+  //.pmbotul li .two {
+  //  //display: block;
+  //  //width: 57%;
+  //  //float: left;
+  //  display: table-cell;
+  //}
   .pmbotul li {
     margin-bottom: 5px;
     //display: flow-root;
@@ -75,6 +94,10 @@ page-profile {
     padding: 4px 10px 14px 10px;
   }
 
+  .pmtitle.bottom.notBottom{
+    padding-bottom: 4px;
+  }
+
   .pmtitle.bottom span ion-icon {
     margin-right: 5px;
   }
@@ -86,9 +109,9 @@ page-profile {
     margin: 5px auto 0px;
   }
 
-  .pmbotul .more-about-me li .one {
-    width: 100%;
-  }
+  //.pmbotul .more-about-me li .one {
+  //  width: 100%;
+  //}
 
   .profile-sub-title {
     width: 100%;
@@ -104,7 +127,7 @@ page-profile {
   }
 
   .pmdetail {
-    padding-right: 15px;
+    //padding-right: 15px;
   }
 
   .pbot_con {
@@ -132,7 +155,7 @@ page-profile {
     border-radius: 50%;
   }
   .online-user {
-    top: 13px;
+    top: 5px;
     right: 10px;
     height: 16px;
     width: 16px;
@@ -164,6 +187,50 @@ page-profile {
     height: 47px;
     top: 68px;
     right: 8px;
+  }
+
+  span.she{
+    float: left;
+    width: calc(33% + 3px);
+    background: url('../assets/img/she.png') no-repeat center;
+    height: 22px;
+    background-size: contain;
+    margin-top: -3px;
+  }
+
+  span.he{
+    float:left;
+    width: 33%;
+    background: url('../assets/img/he.png') no-repeat center;
+    height: 22px;
+    background-size: contain;
+    margin-top: -3px;
+  }
+
+  span.one, span.two{
+    //float:left;
+    width: 32%;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  span.single{
+    width: 66%;
+  }
+
+  span.one.single{
+    width: 65%;
+  }
+
+  span.label{
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(34% - 3px);
+  }
+
+  .profile-sub-title span.single{
+    width: calc(66% + 3px);
   }
 
 }
