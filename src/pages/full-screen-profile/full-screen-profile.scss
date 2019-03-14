@@ -30,6 +30,21 @@ page-full-screen-profile {
     margin-bottom: 5px;
     border-radius: 50%;
   }
+
+  .profile-buttons .disable.favorite-profile-btn {
+    border-radius: 50%;
+    opacity: 1;
+    background: none !important;
+    border: 1px solid #5b5b5b;
+    img {
+      width: 31px;
+      height: 31px;
+      margin: 0 auto;
+      margin-top: 11px;
+      display: block;
+    }
+  }
+
   ion-slides, ion-slides *{
     direction: ltr;
   }

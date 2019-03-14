@@ -20,8 +20,8 @@
   <div *ngIf="user.isFav == '0' && user.id " (click)="favSubmit()"
        class="favorite-profile-btn">
     <img src="assets/img/icons/padd.png"></div>
-  <div *ngIf="user.isFav == '1'" class="disabled favorite-profile-btn"><img
-          src="assets/img/icons/padd.png"></div>
+  <div *ngIf="user.isFav == '1'" (click)="favSubmit()" class="disable favorite-profile-btn"><img
+          src="assets/img/icons/fav-remove.png"></div>
 </div>
 <ion-content>
 

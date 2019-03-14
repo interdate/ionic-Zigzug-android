@@ -144,6 +144,7 @@ export class ProfilePage {
 
     favSubmit(){
         var action;
+
         if (this.user.isFav == '1') {
             this.user.isFav = '0';
             action = 'delete';
@@ -158,6 +159,7 @@ export class ProfilePage {
         });
 
         var act = this.user.isFav == '1' ? 1 : 0;
+
 
         this.api.http.post(this.api.url + '/user/managelists/favi/' + act + '/' + this.user.id, params, this.api.setHeaders(true)).subscribe(data => {
             let res:any = data;

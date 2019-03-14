@@ -70,26 +70,31 @@ export class FullScreenProfilePage {
 
     addFavorites() {
 
-        //console.log(JSON.stringify(user));
-
-        if (this.user.isFav == '0') {
+        var action;
+        if (this.user.isFav == '1') {
+            this.user.isFav = '0';
+            action = 'delete';
+        } else {
             this.user.isFav = '1';
-
-
-            let params = JSON.stringify({
-                list: 'Favorite'
-            });
-
-            this.api.http.post(this.api.url + '/user/managelists/favi/1/'+ this.user.id, params, this.api.setHeaders(true)).subscribe(data => {
-                let res:any = data;
-                let toast = this.toastCtrl.create({
-                    message: res.success,
-                    duration: 3000
-                });
-
-                toast.present();
-            });
+            action = 'create';
         }
+
+        let params = JSON.stringify({
+            list: 'Favorite',
+            action: action
+        });
+
+        var act = this.user.isFav == '1' ? 1 : 0;
+
+        this.api.http.post(this.api.url + '/user/managelists/favi/' + act + '/' + this.user.id, params, this.api.setHeaders(true)).subscribe(data => {
+            let res:any = data;
+            let toast = this.toastCtrl.create({
+                message: res.success,
+                duration: 3000
+            });
+
+            toast.present();
+        });
     }
 
     addLike() {

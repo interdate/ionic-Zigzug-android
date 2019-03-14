@@ -55,16 +55,12 @@ export class ApiProvider {
         public modalCtrl: ModalController,
         public fingerAIO: FingerprintAIO
     ) {
-        this.url = 'http://localhost:8100';
+        //this.url = 'http://localhost:8101';
         //this.url = 'http://10.0.0.7:8100';
-        //this.url = 'https://m.zigzug.co.il/new/api';
+        this.url = 'https://m.zigzug.co.il/new/api';
         //this.url = 'https://www.zigzug.co.il/api/v1';
         //this.testingMode = true;
-
-
-
     }
-
 
     fAllInOne(data: any = {}){
 

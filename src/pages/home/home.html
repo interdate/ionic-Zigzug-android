@@ -57,7 +57,7 @@
               <span class="age">{{user.age}}</span>
             </div>
             <div class="row">
-              <span class="location" [ngClass]="{'long-city': user.city?.length >= 10 }">{{user.city}}</span>
+              <span class="location" [ngClass]="{'long-city': user.area?.length>= 10 }">{{user.area }}</span>
               <span class="distance">{{ user.distance }}</span>
             </div>
           </ion-card-title>
