@@ -41,7 +41,7 @@ export class ApiProvider {
     public notActivateAlert: any;
     public faioData: any;
     public browserToken: any;
-    public appVersion: any = 3;
+    public appVersion: any = 4;
 
     constructor(
         public storage: Storage,
@@ -57,8 +57,7 @@ export class ApiProvider {
     ) {
         //this.url = 'http://localhost:8101';
         //this.url = 'http://10.0.0.7:8100';
-        this.url = 'https://m.zigzug.co.il/new/api';
-        //this.url = 'https://www.zigzug.co.il/api/v1';
+        this.url = 'https://www.zigzug.co.il/api/v1';
         //this.testingMode = true;
     }
 

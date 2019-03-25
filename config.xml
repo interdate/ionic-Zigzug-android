@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="il.co.zigzug" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="il.co.zigzug" version="0.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>זיגזוג</name>
     <description>זיגזוג, אתר חילופי זוגות המוביל בישראל, המקום בו סווינגרס מכירים זוגות . אם אתם רוצים להכיר swingers איכותיים ולחלוק חוויות של החלפת זוגות - זה המקום בשבילכם.</description>
     <author email="contact@interdate-ltd.co.il" href="http://interdate-ltd.co.il/en">Interdate Team</author>
