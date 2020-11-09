@@ -26,11 +26,11 @@ export class DialogPage {
     @ViewChild(Content) content: Content;
     @ViewChild('dialog_msg') messageInput: TextInput;
 
-    user: { id: string, userId: string, isOnline: string, nick_name: string, mainImage: {url: any} ,gender: string, photo};
-    users: Array<{ id: string, isOnline: string, nick_name: string, image: string }>;
+    user: any;
+    users: any;
     texts: any = {a_conversation_with: '', title: '', photo: ''};
     message: any;
-    messages: any; //Array<{ id: string, alert: '', isRead: any, text: string, dateTime: string, from: any, voiceUrl: string }>; //, duration:number
+    messages: any;
     checkChat: any;
     notReadMessage: any = [];
     mediaobject: any = false;
@@ -75,9 +75,9 @@ export class DialogPage {
             this.password = val.password;
         });
 
-        $("#target").focus(function () {
-            alert("Handler for .focus() called.");
-        });
+        // $("#target").focus(function () {
+        //     alert("Handler for .focus() called.");
+        // });
 
         this.api.keyboard.onKeyboardShow().subscribe(data => {
             // $('.scroll-content, .fixed-content').css({'margin-bottom': '65px'});
@@ -102,13 +102,13 @@ export class DialogPage {
     }
 
     subscription() {
-        this.api.storage.get('user_data').then((val) => {
+        //this.api.storage.get('user_data').then((val) => {
             // if(val && val.user_id) {
             //     //this.navCtrl.push(SubscriptionPage);
             //     window.open('https://www.zigzug.co.il/newpayment/?userId=' + val.user_id + '&app=1', '_system');
             // }
             this.navCtrl.push(SubscriptionPage);
-        });
+        //});
     }
 
     turnMic() {
@@ -176,7 +176,7 @@ export class DialogPage {
     }
 
     sendPush() {
-        var userId = typeof this.user.userId != "undefined" ? this.user.userId : this.user.id;
+        let userId = (typeof this.user.userId != "undefined") ? this.user.userId : this.user.id;
         this.api.http.post(this.api.url + '/user/push/' + userId, {}, this.api.setHeaders(true)).subscribe(data => {
         });
     }
@@ -185,7 +185,7 @@ export class DialogPage {
 
         this.submitBtn = true;
 
-
+        let userId = typeof this.user.userId != "undefined" ? this.user.userId : this.user.id;
 
         if (url != "") {
             if (this.alert != "") {
@@ -214,8 +214,8 @@ export class DialogPage {
             });
 
         } else {
-            if(this.message && this.message.trim() != '') {
-                var params = JSON.stringify({
+            if(this.message && this.message.trim().length > 0) {
+                let params = JSON.stringify({
                     message: this.message
                 });
 
@@ -231,7 +231,6 @@ export class DialogPage {
                 this.scrollToBottom();
                 this.message = '';
 
-                var userId = typeof this.user.userId != "undefined" ? this.user.userId : this.user.id;
 
                 this.api.http.post(this.api.url + '/user/chat/' + userId, params, this.api.setHeaders(true)).subscribe(data => {
                     let res: any = data;
@@ -413,17 +412,6 @@ export class DialogPage {
                 this.messages = res.chat.items;
                 this.countNewMess = res.chat.newMess;
                 this.api.hideLoad();
-                // if(this.alert != res.message){
-                //     this.alert = res.message;
-                //     if (this.alert != "") {
-                //         let toast = this.toastCtrl.create({
-                //             message: this.alert,
-                //             duration: 3000
-                //         });
-                //         toast.present();
-                //     }
-                // }
-
 
                 if (res.chat.abilityReadingMessages == 1) {
                     this.countNewMess = 0;
@@ -437,7 +425,6 @@ export class DialogPage {
                     this.setMessagesAsRead(arrMsg);
                 }
                 this.userHasFreePoints = res.chat.userHasFreePoints;
-
 
                 if (res.isNewMess) {
                     this.scrollToBottom();
@@ -514,5 +501,9 @@ export class DialogPage {
             $('textarea').val('');
         });
 
+    }
+
+    toVideoChat() {
+      this.api.openVideoChat({id: this.user.userId, chatId: 0, alert: false, username: this.user.username});
     }
 }

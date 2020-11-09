@@ -10,6 +10,7 @@ import {RegisterPage} from "../register/register";
 import {LoginPage} from "../login/login";
 import {File} from "@ionic-native/file";
 import * as $ from "jquery";
+import {ActivationPage} from "../activation/activation";
 
 //declare var formInitById;
 //declare var submitForm;
@@ -218,7 +219,7 @@ export class ChangePhotosPage {
         let actionSheet = this.actionSheetCtrl.create({
             title: this.dataPage.texts.add_photo,
             buttons: [
-                //app options
+                /*//app options
                 {
                     text: this.dataPage.texts.choose_from_camera,
                     icon: 'aperture',
@@ -231,8 +232,8 @@ export class ChangePhotosPage {
                     handler: () => {
                         this.openGallery();
                     }
-                },
-                /*//browser option
+                },*/
+                //browser option
                 {
                     text: 'בחר תמונה',
                     icon: 'photos',
@@ -240,7 +241,7 @@ export class ChangePhotosPage {
                         //this.openGallery();
                         this.browserUpload()
                     }
-                },*/
+                },
                 {
                     text: this.dataPage.texts.cancel,
                     role: 'destructive',
@@ -261,12 +262,12 @@ export class ChangePhotosPage {
     uploadPhotoInput(fileLoader){
         this.api.showLoad('אנא המתן...');
         let that = this;
-        let file = fileLoader.files[0];
+        let file = $('#fileLoader').prop('files')[0]; //fileLoader.files[0];
         let reader = new FileReader();
 
         if (file) {
             reader.onload = function () {
-                that.getOrientation(fileLoader.files[0], function (orientation) {
+                that.getOrientation(file, function (orientation) {
                     if (orientation > 1) {
                         that.resetOrientation(reader.result, orientation, function (resetBase64Image) {
                             that.uploadPhotoBrowser(resetBase64Image);
@@ -281,6 +282,7 @@ export class ChangePhotosPage {
     }
 
     uploadPhotoBrowser(dataUrl){
+      console.log(dataUrl);
         if(dataUrl) {
             let that = this;
             that.api.showLoad('אנא המתן...');
@@ -329,7 +331,7 @@ export class ChangePhotosPage {
                     }
                 };
                 that.api.setHeaders(true);
-                that.api.http.post(that.api.url + '/user/image', fd, header).subscribe((res: any) => {
+                that.api.http.post('https://m.zigzug.co.il/new/api/user/image', fd, header).subscribe((res: any) => {
                     //this.navCtrl.push(ChangePhotosPage, {new_user: 1});
                     // that.getPageData();
                     // console.log(JSON.stringify(res));
@@ -411,6 +413,7 @@ export class ChangePhotosPage {
         };
         reader.readAsArrayBuffer(file);
     }
+
     resetOrientation(srcBase64, srcOrientation, callback) {
         let img = new Image();
 
@@ -539,17 +542,18 @@ export class ChangePhotosPage {
     onHomePage() {
         //this.api.storage.remove('new_user');
         if(this.new_user) {
-            if(this.navParams.get('usr').userGender == '1') {
-                this.navCtrl.push(LoginPage, {
-                    'login': {
-                        username: this.navParams.get('usr').userNick,
-                        password: this.navParams.get('usr').userPass
-                    }
-                });
-                //this.navCtrl.popToRoot();
-            }else{
+            // if(this.navParams.get('usr').userGender == '1') {
+            //     this.navCtrl.push(LoginPage, {
+            //         'login': {
+            //             username: this.navParams.get('usr').userNick,
+            //             password: this.navParams.get('usr').userPass
+            //         }
+            //     });
+            //     //this.navCtrl.popToRoot();
+            // }else{
                 this.api.fAllInOne({username: this.username, password: this.password, register: 1});
-            }
+                this.navCtrl.push(ActivationPage);
+            // }
             // this.navCtrl.push(LoginPage,{
             //     'login':{
             //         username: this.username,

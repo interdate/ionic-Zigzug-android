@@ -17,11 +17,11 @@
   <div *ngIf="data">
     <h1>{{ data.title }}</h1>
     <div class="text-before" [innerHTML]="data.textBefore"></div>
-    <div class="paymentbox" *ngFor="let subscription of data.subcriptions" (click)="sendForm(subscription.opt)">
+    <div class="paymentbox" *ngFor="let subscription of data.subscriptions" (click)="sendForm(subscription.opt)">
         <div class="cont">
             <div class="total">
                 <h3><div class="nis">₪</div>{{ subscription.price}}<br>
-                    <span [ngClass]="{'margin': subscription.opt == '5'}">ל{{ subscription.period }}</span></h3>
+                    <span [ngClass]="{'margin': subscription.opt == '5'}">{{ subscription.period }}</span></h3>
             </div>
             <h2>{{ subscription.title }}</h2>
             <p>{{ subscription.description }}</p>

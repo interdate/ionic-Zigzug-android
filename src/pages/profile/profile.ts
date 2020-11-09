@@ -328,4 +328,12 @@ export class ProfilePage {
         $('.back-btn').show();
     }
 
+    toVideoChat() {
+      this.api.openVideoChat({id: this.user.id, chatId: 0, alert: false, username: this.user.userNick});
+    }
+
+    dAndroid(){
+      window.open('https://m.zigzug.co.il/android/download.html');
+    }
+
 }

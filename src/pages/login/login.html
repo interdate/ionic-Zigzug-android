@@ -20,11 +20,11 @@
   <div class="login-form">
     <ion-list>
       <ion-item>
-        <ion-input [(ngModel)]="user.name" type="text" placeholder="{{ form.login.username.label }}"></ion-input>
+        <ion-input [(ngModel)]="user.name" type="text" placeholder="{{ form.login.username.label }}" (ionFocus)="onFocus();" (ionBlur)="onBlur()"></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-input [(ngModel)]="form.login.password.value" type="password" placeholder="{{ form.login.password.label }}"></ion-input>
+        <ion-input [(ngModel)]="form.login.password.value" type="password" placeholder="{{ form.login.password.label }}" (ionFocus)="onFocus();" (ionBlur)="onBlur()"></ion-input>
       </ion-item>
       <div *ngIf="errors" color="red" class="err">{{ errors }}</div>
 
@@ -32,11 +32,11 @@
 
     <div class="login-btn">
       <button margin-bottom color="danger" tappable (click)="formSubmit()" ion-button block>{{ form.login.submit }}</button>
-      <div *ngIf="api.fingerAuth && api.setEnableFingerAuth" class="keyboardClose" [hidden]="keyboard.isOpen()">
-        <button color="danger" (click)="api.fAllInOne({navCtrl: navCtrl})" tappable ion-button block>{{ form.login.fingerprint_login }}</button>
+      <div *ngIf="api.fingerAuth && api.setEnableFingerAuth" class="keyboardClose">
+        <button color="danger" (click)="loginByFinger();" tappable ion-button block>{{ form.login.fingerprint_login }}</button>
       </div>
     </div>
-    <div padding-top padding-left padding-right class="keyboardClose" [hidden]="keyboard.isOpen()">
+    <div padding-top padding-left padding-right class="keyboardClose">
       <button color="danger" class="btn" (click)="onRegistrationPage()" ion-button default>{{ form.login.join_free }}</button>
       <button color="danger" class="btn grey" (click)="onPasswordRecoveryPage()"  ion-button default>{{ form.login.forgot_password }}</button>
     </div>

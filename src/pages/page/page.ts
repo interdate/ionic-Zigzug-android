@@ -34,7 +34,7 @@ export class Page {
                 console.log('register: ', err);
                 this.page = {
                     title: 'Page Error',
-                    content: err.error
+                  pageText: err.error
                 };
                 $('#content').html(this.page.pageText);
                 this.api.hideLoad();
@@ -47,7 +47,7 @@ export class Page {
     }
 
     ionViewWillEnter() {
-        this.api.pageName = 'ProfilePage';
+        this.api.pageName = 'PagePage';
         $('.back-btn').show();
     }
 

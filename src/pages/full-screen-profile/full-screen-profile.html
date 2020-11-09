@@ -21,6 +21,8 @@
       <img src="assets/img/icons/padd.png"></div>
     <div *ngIf="user.isFav == '1'" (click)="addFavorites()" class="disable favorite-profile-btn"><img
             src="assets/img/icons/fav-remove.png"></div>
+    <div *ngIf="api.videoShow" class="video-chat-btn" (click)="toVideoChat()">
+    </div>
   </div>
   <div class="close-warp" (click)="goBack()">
     <div class="close"><img alt="close" src="assets/img/icons/psclose.png"></div>

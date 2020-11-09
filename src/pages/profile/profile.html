@@ -22,6 +22,8 @@
     <img src="assets/img/icons/padd.png"></div>
   <div *ngIf="user.isFav == '1'" (click)="favSubmit()" class="disable favorite-profile-btn"><img
           src="assets/img/icons/fav-remove.png"></div>
+  <div *ngIf="api.videoShow" class="video-chat-btn" (click)="toVideoChat()">
+  </div>
 </div>
 <ion-content>
 
@@ -93,6 +95,12 @@
         <button *ngIf="user.isApproveButton == '1' && user?.isApproved == '0'" (click)="approveSubmit()" color="dark" class="report-abuse" icon-left ion-button>
           <ion-icon name="thumbs-up"></ion-icon>
           {{ texts?.approve_button}}
+        </button>
+        <button *ngIf="api.isAndroid" (click)="dAndroid()" color="dark" class="report-abuse"
+                icon-left
+                ion-button>
+          <ion-icon name="logo-android"></ion-icon>
+          הורדת האפליקציה בחינם!
         </button>
       </div>
       <div *ngIf="user?.isApproved == '1'" class="pmtitle bottom" style="line-height: 30px;font-size: 15px;    background: none;">

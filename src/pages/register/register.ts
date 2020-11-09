@@ -84,17 +84,19 @@ export class RegisterPage {
 
                 if (this.user.step == 3) {
                     this.api.setHeaders(true, this.user.userNick, this.user.userPass);
-                    this.login = (this.user.userGender == '1') ? 'not_activated' : 'login';
+                    this.login = this.api.status = 'not_activated';//(this.user.userGender == '1') ? 'not_activated' : 'login';
                     this.api.myId = this.user.userId;
                     this.api.storage.set('user_data', {
                         username: this.user.userNick,
                         password: this.user.userPass,
                         user_id: this.user.userId,
                         status: this.login,
+                        userIsPaying: false,
+                        textMess: this.user.texts,
                         user_photo: ''
                     });
                     this.api.storage.set('username', this.user.userNick);
-
+                    this.api.notActivateAlert = true;
 
                     let that = this;
                     setTimeout(function () {

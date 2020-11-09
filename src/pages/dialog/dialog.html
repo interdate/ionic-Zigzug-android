@@ -35,7 +35,11 @@
           <ion-col
                   *ngIf="!msg.voiceUrl && msg?.text != 'לא ניתן לצפות בהודעה. לרכישת מנוי לחץ כאן' && msg?.text != 'לא ניתן לצפות בהודעה. לרכישת מנוי לחץ כאן או השתמש בנקודה לקריאת הודעות'"
                   class="text" width-75>
-            <ion-card-content [innerHTML]="msg?.text" item-left>
+            <ion-card-content *ngIf="msg?.missingCall == ''" [innerHTML]="msg?.text" item-left>
+            </ion-card-content>
+            <ion-card-content *ngIf="msg?.missingCall !== ''" item-left>
+              <div [innerHTML]="msg?.text"></div>
+              <div class="click" (click)="toVideoChat()" [innerHTML]="msg?.missingCall"></div>
             </ion-card-content>
           </ion-col>
           <ion-col *ngIf="msg?.text == 'לא ניתן לצפות בהודעה. לרכישת מנוי לחץ כאן'"

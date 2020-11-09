@@ -119,6 +119,10 @@ export class FullScreenProfilePage {
         }
     }
 
+    toVideoChat() {
+      this.api.openVideoChat({id: this.user.id, chatId: 0, alert: false, username: this.user.userNick});
+    }
+
     ionViewWillEnter() {
         this.api.pageName = 'FullScreenProfilePage';
     }

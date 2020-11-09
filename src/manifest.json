@@ -10,8 +10,5 @@
   }],
   "background_color": "#4e8ef7",
   "theme_color": "#4e8ef7",
-  "xwalk_hosts": [
-    "https://*/*",
-    "http://*.co.il/*"
-  ]
+  "gcm_sender_id":"103953800507"
 }

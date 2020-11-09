@@ -88,7 +88,7 @@
 
 <!--<img style="display: none;" class="banner" src="/images/spedate1.gif">-->
 <a class="link-banner"  *ngIf="banner?.src != '.' && is_login" href="{{banner?.link}}" (click)="goTo();">
-  <img class="banner" src="{{'https://www.zigzug.co.il/images/banners/' + banner?.src}}">"#"
+  <img class="banner" src="{{banner?.src}}">
 </a>
 <ion-footer *ngIf="is_login" (swipe)="swipeFooterMenu()">
   <!--<div *ngIf="new_message && new_message.is_not_sent_today == true" class="messageNotify">

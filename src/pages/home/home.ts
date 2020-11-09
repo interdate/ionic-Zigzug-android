@@ -55,6 +55,14 @@ export class HomePage {
         public api: ApiProvider,
         public events: Events
     ) {
+        this.api.audioCall = new Audio();
+        this.api.audioCall.src = 'https://m.zigzug.co.il/phone_ringing.mp3';
+        this.api.audioCall.loop = true;
+        this.api.audioCall.load();
+        this.api.audioWait = new Audio();
+        this.api.audioWait.src = 'https://m.zigzug.co.il/landline_phone_ring.mp3';
+        this.api.audioWait.loop = true;
+        this.api.audioWait.load();
         if (navParams.get('params') && navParams.get('params') != 'login') {
 
             if (navParams.get('action')) {
@@ -98,13 +106,7 @@ export class HomePage {
                 //     this.api.testingMode = false;
                 // }
                 if (val.status == 'not_activated') {
-                    this.navCtrl.setRoot(LoginPage,{
-                        'login': {
-                            username: val.username,
-                            password: val.password
-                        }
-                    });
-                    this.navCtrl.popToRoot();
+                    this.navCtrl.push(LoginPage,{'redirect': 1});
                 } else {
                     this.getUsers();
                 }
@@ -113,18 +115,7 @@ export class HomePage {
                 this.navCtrl.popToRoot();
             }
         });
-        //this.pushMess.updateToken();
-        // if(this.pushMess.currentToken) {
-        //     console.log("fcmToken: " + this.pushMess.currentToken);
-        //     let data = JSON.stringify({deviceId: this.pushMess.currentToken});
-        //     this.api.http.post(this.api.url + '/user/deviceId/OS:Browser', data, this.api.setHeaders(true)).subscribe(data => {
-        //         //alert(JSON.stringify(data));
-        //     });
-        // }
-        // let that = this;
-        // setTimeout(function () {
-        //     that.moreUsers();
-        // },1000);
+
     }
 
     trackByFn(index: number, item: any): any {
@@ -341,10 +332,7 @@ export class HomePage {
 
     getUsers() {
 
-        //this.api.showLoad('אנא המתן...');
-
         if (this.navParams.get('params') == 'login') {
-            //loading.present();
             var headers = this.api.setHeaders(true);
             if(this.navParams.get('username') && this.navParams.get('password')) {
                 this.username = this.navParams.get('username');
@@ -372,11 +360,7 @@ export class HomePage {
                 this.api.hideLoad();
 
                 if(err.status == 403 ){
-                    //if(val.status != resp.status){
-                    //                         this.status = val.status = resp.status;
-                    //                         val.userIsPaying = resp.userIsPaying;
-                    //                         this.api.storage.set('user_data', val);
-                    //                     }
+
                     if(this.api.pageName != 'LoginPage' && this.api.status != 'block') {
                         this.api.status = 'block';
                         this.api.setHeaders(false, null, null);
@@ -492,6 +476,10 @@ export class HomePage {
         this.api.pageName = 'HomePage';
         $('.back-btn').hide();
 
+    }
+
+    toVideoChat(user) {
+      this.api.openVideoChat({id: user.id, chatId: 0, alert: false, username: user.nickName});
     }
 
 }

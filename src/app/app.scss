@@ -903,6 +903,18 @@ ion-footer.footer-ios::before {
   height: 36px;
 }
 
+.redCall{
+  color: red !important;
+}
+.greenCall{
+  color: green !important;
+  font-weight: bold !important;
+}
+
+.icon.ion-logo-android{
+  color: #a5c736;
+}
+
 @media (max-width: 375px) {
 
   .footer-menu .menu-two li {
