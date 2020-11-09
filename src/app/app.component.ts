@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
     Nav,
     Platform,
@@ -10,11 +10,11 @@ import {
     Events,
     LoadingController
 } from 'ionic-angular';
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { ApiProvider } from '../providers/api/api';
-import { Push, PushObject, PushOptions } from '@ionic-native/push';
-import { HomePage } from '../pages/home/home';
+import {StatusBar} from '@ionic-native/status-bar';
+import {SplashScreen} from '@ionic-native/splash-screen';
+import {ApiProvider} from '../providers/api/api';
+import {Push, PushObject, PushOptions} from '@ionic-native/push';
+import {HomePage} from '../pages/home/home';
 
 import {LoginPage} from "../pages/login/login";
 import {ArenaPage} from "../pages/arena/arena";
@@ -38,7 +38,7 @@ import {FirebaseMessagingProvider} from "../providers/firebase-messaging";
 import * as $ from "jquery";
 
 @Component({
-  templateUrl: 'app.html'
+    templateUrl: 'app.html'
 })
 export class MyApp {
     @ViewChild(Nav) nav: Nav;
@@ -48,7 +48,7 @@ export class MyApp {
     rootPage: any;
     ajaxInterval: any;
 
-    banner: {id: any, src: string; link: string};
+    banner: { id: any, src: string; link: string };
     menu_items_logout: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
     menu_items_login: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
     menu_items: any;//Array<{_id: string, icon: string, title: string, count: any, component: any}>;
@@ -72,125 +72,115 @@ export class MyApp {
     interval: any = true;
     push2: PushObject;
 
-  constructor(
-      public platform: Platform,
-      public menu: MenuController,
-      public statusBar: StatusBar,
-      public splashScreen: SplashScreen,
-      public api: ApiProvider,
-      public toastCtrl: ToastController,
-      public alertCtrl: AlertController,
-      public events: Events,
-      public loadingCtrl: LoadingController,
-      private browserPush: FirebaseMessagingProvider,
-      public push: Push
-
-  ) {
-      //alert(pushMess.currentToken);
-      //this.browserPush.disableNotifications();
-      //this.browserPush.enableNotifications();
-
-
-      this.api.storage.get('fingerAIO').then((val:any)=>{
-          //alert(JSON.stringify(val));
-          this.api.setEnableFingerAuth = (val && typeof val.setEnableFingerAuth != 'undefined') ? Boolean(parseInt(val.setEnableFingerAuth)) : true;
-          this.api.faioData = val;
-          this.api.fingerAuth = (val && typeof val.password != 'undefined') ? true : false;
-      });
-
-      this.api.enableFingerAuth = 0;
+    constructor(
+        public platform: Platform,
+        public menu: MenuController,
+        public statusBar: StatusBar,
+        public splashScreen: SplashScreen,
+        public api: ApiProvider,
+        public toastCtrl: ToastController,
+        public alertCtrl: AlertController,
+        public events: Events,
+        public loadingCtrl: LoadingController,
+        private browserPush: FirebaseMessagingProvider,
+        public push: Push
+    ) {
+        //alert(pushMess.currentToken);
+        //this.browserPush.disableNotifications();
+        //this.browserPush.enableNotifications();
 
 
-      this.api.http.get(api.url + '/user/menu/', this.api.setHeaders(false)).subscribe((data: any) => {
-          //let resp: any = data;
-          //alert(JSON.stringify(resp));
-          this.initMenuItems(data.menu);
+        this.api.storage.get('fingerAIO').then((val: any) => {
+            //alert(JSON.stringify(val));
+            this.api.setEnableFingerAuth = (val && typeof val.setEnableFingerAuth != 'undefined') ? Boolean(parseInt(val.setEnableFingerAuth)) : true;
+            this.api.faioData = val;
+            this.api.fingerAuth = (val && typeof val.password != 'undefined') ? true : false;
+        });
 
-          this.api.storage.get('user_data').then((val) => {
-              if (!val) {
-                  if(this.api.pageName == 'RegisterPage'){
+        this.api.enableFingerAuth = 0;
+
+
+        this.api.http.get(api.url + '/user/menu/', this.api.setHeaders(false)).subscribe((data: any) => {
+                //let resp: any = data;
+                //alert(JSON.stringify(resp));
+                this.initMenuItems(data.menu);
+                if (this.api.pageName == 'RegisterPage') {
                     this.rootPage = RegisterPage;
-                  }else {
-                    this.rootPage = LoginPage;
-                  }
-                  this.menu_items = this.menu_items_logout;
-              } else {
-                  this.api.password = val.password;
-                  this.api.myId = val.user_id;
-                  this.api.setHeaders(true,val.username,val.password);
-                  this.menu_items = this.menu_items_login;
-                  this.getBingo();
-                  this.status = val.status;
-                  //var params = {};
-                  //alert('er');
-                  if(val.status == 'toPay'){
-                      //this.nav.setRoot(SubscriptionPage);
-                      this.rootPage = SubscriptionPage;
-                      //this.nav.popToRoot();
-                  }else if(val.status == 'not_activated'){
-                      this.rootPage = LoginPage;
-                      this.menu_items = this.menu_items_logout;
-                      // var params = {
-                      //     'login':{
-                      //         username: this.api.username,
-                      //         password: this.api.password
-                      //     }
-                      // };
-                      // this.nav.push(this.rootPage,params);
-                      //this.nav.popToRoot();
-                      this.nav.push(ActivationPage);
-                  }else {
-                      this.rootPage = HomePage;
-                      this.api.sendBrowserPhoneId();
-                  }
-              }
-              this.initPushNotification(); //push for android
-              if(!val || val.status != 'not_activated') {
-                  this.nav.setRoot(this.rootPage);
-                  this.nav.popToRoot();
-              }
-          });
-          //alert(3);
-      },
-      (error: any) => {
-          //alert('Error: ' + JSON.stringify(error));
-      }
-      );
+                }
+                this.api.storage.get('user_data').then((val) => {
+                    console.log(this.api.pageName);
+                    if (!val) {
+                        if (this.api.pageName == 'RegisterPage') {
+                            this.rootPage = RegisterPage;
+                        } else {
+                            this.rootPage = LoginPage;
+                        }
+                        this.menu_items = this.menu_items_logout;
+                    } else {
+                        this.api.password = val.password;
+                        this.api.myId = val.user_id;
+                        this.api.setHeaders(true, val.username, val.password);
+                        this.menu_items = this.menu_items_login;
+                        this.getBingo();
+                        this.status = val.status;
+                        if (val.status == 'toPay') {
+                            this.rootPage = SubscriptionPage;
+                        } else if (val.status == 'not_activated') {
+                            this.rootPage = LoginPage;
+                            this.menu_items = this.menu_items_logout;
 
-      this.closeMsg();
-      let that = this;
+                            this.nav.push(ActivationPage);
+                        } else {
+                            this.rootPage = HomePage;
+                            this.api.sendBrowserPhoneId();
+                        }
+                    }
+                    this.initPushNotification(); //push for android
+                    if (!val || val.status != 'not_activated') {
+                        this.nav.setRoot(this.rootPage);
+                        this.nav.popToRoot();
+                    }
+                });
+            },
+            (error: any) => {
+                //alert('Error: ' + JSON.stringify(error));
+            }
+        );
 
-      this.ajaxInterval = setInterval(function () {
-          if (that.api.password != false && that.api.password != null) {
-              that.getBingo();
-              // New Message Notification
-              //that.getMessage();
-              that.getStatistics();
-          }
-      }, 10000);
+        this.closeMsg();
+        let that = this;
 
-      this.initializeApp();
-      this.menu1Active();
-      this.getAppVersion();
+        this.ajaxInterval = setInterval(function () {
+            if (that.api.password != false && that.api.password != null) {
+                that.getBingo();
+                // New Message Notification
+                //that.getMessage();
+                that.getStatistics();
+            }
+        }, 10000);
 
-  }
+        this.initializeApp();
+        this.menu1Active();
+        this.getAppVersion();
 
-  initializeApp() {
-      //alert(2);
-    this.platform.ready().then((readySource) => {
-        if(readySource=='cordova') {
-            // Okay, so the platform is ready and our plugins are available.
-            // Here you can do any higher level native things you might need.
-            this.statusBar.show();
-            //this.statusBar.styleDefault();
-            this.statusBar.styleBlackOpaque();
-            this.statusBar.backgroundColorByName('black');
+    }
 
-            this.splashScreen.hide();
+    initializeApp() {
+        //alert(2);
+        this.platform.ready().then((readySource) => {
+            if (readySource == 'cordova') {
+                // Okay, so the platform is ready and our plugins are available.
+                // Here you can do any higher level native things you might need.
+                this.statusBar.show();
+                //this.statusBar.styleDefault();
+                this.statusBar.styleBlackOpaque();
+                this.statusBar.backgroundColorByName('black');
 
-        }
-    });
-  }
+                this.splashScreen.hide();
+
+            }
+        });
+    }
 
     getAppVersion() {
         this.api.http.get(this.api.url + '/app/version', this.api.header).subscribe(data => {
@@ -200,34 +190,34 @@ export class MyApp {
                 //alert(this.appVersion.getVersionCode());
                 //update
                 //this.appVersion.getVersionNumber().then((s) => {
-                    if (parseInt(resp.version) > this.api.appVersion) {
-                        let prompt = this.alertCtrl.create({
-                            title: resp.title,
-                            message: resp.message,
-                            cssClass: 'new-version',
-                            buttons: [
-                                {
-                                    text: resp.cancel,
-                                    handler: data => {
-                                        //console.log('Cancel clicked');
-                                        if(Boolean(parseInt(resp.mustUpdate))){
-                                            this.getAppVersion();
-                                        }
-                                    }
-                                },
-                                {
-                                    text: resp.update,
-                                    handler: data => {
-                                        window.open(resp.url, '_system'); //'market://details?id=co.il.zigzug'
-                                        if(Boolean(parseInt(resp.mustUpdate))){
-                                            this.getAppVersion();
-                                        }
+                if (parseInt(resp.version) > this.api.appVersion) {
+                    let prompt = this.alertCtrl.create({
+                        title: resp.title,
+                        message: resp.message,
+                        cssClass: 'new-version',
+                        buttons: [
+                            {
+                                text: resp.cancel,
+                                handler: data => {
+                                    //console.log('Cancel clicked');
+                                    if (Boolean(parseInt(resp.mustUpdate))) {
+                                        this.getAppVersion();
                                     }
                                 }
-                            ]
-                        });
-                        prompt.present();
-                    }
+                            },
+                            {
+                                text: resp.update,
+                                handler: data => {
+                                    window.open(resp.url, '_system'); //'market://details?id=co.il.zigzug'
+                                    if (Boolean(parseInt(resp.mustUpdate))) {
+                                        this.getAppVersion();
+                                    }
+                                }
+                            }
+                        ]
+                    });
+                    prompt.present();
+                }
                 //})
             }
 
@@ -245,11 +235,11 @@ export class MyApp {
     getStatistics() {
         this.api.storage.get('user_data').then((val) => {
             if (val) {
-                this.api.http.get(this.api.url + '/user/statistics/', this.api.setHeaders(true)).subscribe((data:any) => {
+                this.api.http.get(this.api.url + '/user/statistics/', this.api.setHeaders(true)).subscribe((data: any) => {
                     var resp: any = data;
                     let statistics = resp.statistics;
 
-                    if(val.status != resp.status || val.userIsPaying != resp.userIsPaying){
+                    if (val.status != resp.status || val.userIsPaying != resp.userIsPaying) {
                         this.api.status = val.status = resp.status;
                         this.api.userIsPaying = val.userIsPaying = resp.userIsPaying;
                         this.api.textMess = val.textMess = data.texts;
@@ -277,7 +267,7 @@ export class MyApp {
                     this.menu_items_footer2[1].count = statistics.newNotificationsNumber;
                     //this.menu_items_footer2[2].count = 0;
                     this.menu_items_footer1[3].count = statistics.newMessagesNumber;
-                    if(typeof this.push2 != 'undefined') {
+                    if (typeof this.push2 != 'undefined') {
                         this.push2.setApplicationIconBadgeNumber(statistics.newMessagesNumber);
                     }
                     this.menu_items_footer2[0].count = statistics.fav;//favorited
@@ -290,12 +280,12 @@ export class MyApp {
                 }, err => {
                     console.log('Statistics Error: ' + JSON.stringify(err));
                     this.api.hideLoad();
-                    if(err.status == 403 ) {
-                        if(this.api.status != 'block') {
+                    if (err.status == 403) {
+                        if (this.api.status != 'block') {
                             this.homePage();
                             this.api.errorMess = err.error;
                         }
-                    }else{
+                    } else {
                         this.api.errorMess = '';
                     }
                 });
@@ -329,9 +319,15 @@ export class MyApp {
                {_id: '', icon: 'ribbon', title: 'Fingerprint2', component: Fingerprint2Page, count: ''},
                {_id: '', icon: 'ribbon', title: 'Fingerprint3', component: Fingerprint3Page, count: ''},*/
         ];
-        if(menu.android){
-          this.api.isAndroid = true;
-          this.menu_items_logout.push({_id: 'android', icon: 'logo-android', title: menu.android, component: HomePage, count: ''});
+        if (menu.android) {
+            this.api.isAndroid = true;
+            this.menu_items_logout.push({
+                _id: 'android',
+                icon: 'logo-android',
+                title: menu.android,
+                component: HomePage,
+                count: ''
+            });
         }
 
         this.menu_items = [
@@ -342,8 +338,14 @@ export class MyApp {
             {_id: 'search', icon: '', title: menu.search, component: SearchPage, count: ''},
             {_id: '', icon: 'information-circle', title: 'שאלות נפוצות', component: FaqPage, count: ''},
         ];
-        if(menu.android){
-          this.menu_items.push({_id: 'android', icon: 'logo-android', title: menu.android, component: HomePage, count: ''});
+        if (menu.android) {
+            this.menu_items.push({
+                _id: 'android',
+                icon: 'logo-android',
+                title: menu.android,
+                component: HomePage,
+                count: ''
+            });
         }
 
         this.menu_items_login = [
@@ -351,15 +353,29 @@ export class MyApp {
             {_id: 'the_area', icon: '', title: menu.the_arena, component: ArenaPage, count: ''},
             {_id: 'notifications', icon: '', title: menu.notifications, component: NotificationsPage, count: ''},
             {_id: 'stats', icon: 'stats', title: menu.contacts, component: ProfilePage, count: ''},
-            {_id: 'freeToday', src_img: 'assets/img/free_today.png', icon: '', title: menu.freeToday, list: 'freeToday', component: HomePage, count: ''},
+            {
+                _id: 'freeToday',
+                src_img: 'assets/img/free_today.png',
+                icon: '',
+                title: menu.freeToday,
+                list: 'freeToday',
+                component: HomePage,
+                count: ''
+            },
             {_id: 'search', icon: '', title: menu.search, component: SearchPage, count: ''},
             {_id: '', icon: 'information-circle', title: 'שאלות נפוצות', component: FaqPage, count: ''},
             {_id: '', icon: 'mail', title: menu.contact_us, component: ContactUsPage, count: ''},
             {_id: 'subscribe', icon: 'ribbon', title: 'רכישת מנוי', component: SubscriptionPage, count: ''},
 
         ];
-        if(menu.android){
-          this.menu_items_login.push({_id: 'android', icon: 'logo-android', title: menu.android, component: HomePage, count: ''});
+        if (menu.android) {
+            this.menu_items_login.push({
+                _id: 'android',
+                icon: 'logo-android',
+                title: menu.android,
+                component: HomePage,
+                count: ''
+            });
         }
 
         this.menu_items_settings = [
@@ -486,8 +502,24 @@ export class MyApp {
                 component: NotificationsPage,
                 count: ''
             },
-            {_id: '', src_img: 'assets/img/icons/search.png', icon: '', title: menu.search, list: '', component: SearchPage, count: ''},
-            {_id: '', src_img: 'assets/img/free_today.png', icon: '', title: menu.freeToday, list: 'freeToday', component: HomePage, count: ''},
+            {
+                _id: '',
+                src_img: 'assets/img/icons/search.png',
+                icon: '',
+                title: menu.search,
+                list: '',
+                component: SearchPage,
+                count: ''
+            },
+            {
+                _id: '',
+                src_img: 'assets/img/free_today.png',
+                icon: '',
+                title: menu.freeToday,
+                list: 'freeToday',
+                component: HomePage,
+                count: ''
+            },
         ];
     }
 
@@ -602,11 +634,11 @@ export class MyApp {
         // });
     }
 
-    openPushMessage(data){
-        if(typeof data.additionalData.urlRedirect == 'undefined'){
-            if(typeof data.additionalData.userId == 'undefined'){
+    openPushMessage(data) {
+        if (typeof data.additionalData.urlRedirect == 'undefined') {
+            if (typeof data.additionalData.userId == 'undefined') {
                 this.nav.push(InboxPage);
-            }else{
+            } else {
                 //alert(JSON.stringify(data));
                 this.nav.push(DialogPage, {
                     user: {
@@ -615,8 +647,9 @@ export class MyApp {
                     }
                 });
             }
-        }else{
-            /*var ref = */window.open(data.additionalData.urlRedirect, '_system');
+        } else {
+            /*var ref = */
+            window.open(data.additionalData.urlRedirect, '_system');
         }
     }
 
@@ -645,14 +678,14 @@ export class MyApp {
 
     getBanner() {
         this.api.http.get(this.api.url + '/user/banner', this.api.header).subscribe(data => {
-            let resp:any = data;
+            let resp: any = data;
             this.banner = resp;
         });
     }
 
     goTo() {
         this.api.http.get(this.api.url + '/user/banner/click/' + this.banner.id, this.api.header).subscribe(data => {
-          window.open(this.banner.link, '_system');
+            window.open(this.banner.link, '_system');
         });
         return false;
     }
@@ -710,7 +743,7 @@ export class MyApp {
                 //         window.open('https://www.zigzug.co.il/newpayment/?userId=' + val.user_id + '&app=1', '_blank');
                 //     }
                 // });
-            }else if(page._id == 'android') {
+            } else if (page._id == 'android') {
                 window.open('https://m.zigzug.co.il/android/download.html');
             } else {
 
@@ -724,12 +757,12 @@ export class MyApp {
                 });
             }
             //if(page._id != 'subscribe') {
-                if (page._id == 'edit_profile') {
-                    let params = {user: {step: 0, register: false}};
-                    this.nav.push(RegisterPage, params);
-                } else {
-                    this.nav.push(page.component, {page: page, action: 'list', params: params});
-                }
+            if (page._id == 'edit_profile') {
+                let params = {user: {step: 0, register: false}};
+                this.nav.push(RegisterPage, params);
+            } else {
+                this.nav.push(page.component, {page: page, action: 'list', params: params});
+            }
             //}
         }
     }
@@ -760,95 +793,96 @@ export class MyApp {
                             bingo: resp.user
                         });
                         this.nav.push(BingoPage, {data: resp});
-                        this.api.http.post(this.api.url + '/user/bingo/splashed', params, this.api.setHeaders(true)).subscribe(data1 => { });
+                        this.api.http.post(this.api.url + '/user/bingo/splashed', params, this.api.setHeaders(true)).subscribe(data1 => {
+                        });
                     }
                 });
 
-              if(this.api.pageName != 'SubscriptionPage' && this.api.status != 'not_activated') {
-                this.api.http.get(this.api.url + '/user/call/get', this.api.setHeaders(true)).subscribe((data: any) => {
-                  console.log(this.api.videoChat == null && data.calls);
-                  if (this.api.videoChat == null && data.calls) {
+                if (this.api.pageName != 'SubscriptionPage' && this.api.status != 'not_activated') {
+                    this.api.http.get(this.api.url + '/user/call/get', this.api.setHeaders(true)).subscribe((data: any) => {
+                        console.log(this.api.videoChat == null && data.calls);
+                        if (this.api.videoChat == null && data.calls) {
 
-                    //res['userId'] = val;
-                    this.callAlert(data);
+                            //res['userId'] = val;
+                            this.callAlert(data);
 
-                  }
-                });
-              }
+                        }
+                    });
+                }
             }
         });
     }
 
-  async callAlert(data){
-    if(this.api.callAlertShow == false && this.api.videoChat == null) {
-      this.api.playAudio('wait');
-      this.api.callAlertShow = true;
-      const param = {
-        id: data.calls.msgFromId,
-        chatId: data.calls.msgId,
-        alert: true,
-        username: data.calls.nickName,
-      };
-      this.api.checkVideoStatus(param);
-      this.api.callAlert = await this.api.alertCtrl.create({
-        title: '<img class="alert-call" width="40" src="' + data.calls.img.url + '"> ' + data.calls.title,
-        // header: 'שיחה נכנסת',
-        message: data.calls.title.message,
-        buttons: [
-          {
-            text: data.calls.buttons[1],
-            cssClass: 'redCall',
-            role: 'cancel',
-            handler: () => {
-              this.api.stopAudio();
-              this.api.callAlertShow = false;
-              this.api.http.post(this.api.url + '/user/call/' + param.id, {
-                message: 'close',
-                id: param.chatId
-              }, this.api.setHeaders(true)).subscribe((data: any) => {
-                // let res = data;
-                console.log('close');
-                if(this.api.callAlert !== null) {
-                  this.api.callAlert.dismiss();
-                  this.api.callAlert = null;
-                }
+    async callAlert(data) {
+        if (this.api.callAlertShow == false && this.api.videoChat == null) {
+            this.api.playAudio('wait');
+            this.api.callAlertShow = true;
+            const param = {
+                id: data.calls.msgFromId,
+                chatId: data.calls.msgId,
+                alert: true,
+                username: data.calls.nickName,
+            };
+            this.api.checkVideoStatus(param);
+            this.api.callAlert = await this.api.alertCtrl.create({
+                title: '<img class="alert-call" width="40" src="' + data.calls.img.url + '"> ' + data.calls.title,
+                // header: 'שיחה נכנסת',
+                message: data.calls.title.message,
+                buttons: [
+                    {
+                        text: data.calls.buttons[1],
+                        cssClass: 'redCall',
+                        role: 'cancel',
+                        handler: () => {
+                            this.api.stopAudio();
+                            this.api.callAlertShow = false;
+                            this.api.http.post(this.api.url + '/user/call/' + param.id, {
+                                message: 'close',
+                                id: param.chatId
+                            }, this.api.setHeaders(true)).subscribe((data: any) => {
+                                // let res = data;
+                                console.log('close');
+                                if (this.api.callAlert !== null) {
+                                    this.api.callAlert.dismiss();
+                                    this.api.callAlert = null;
+                                }
 
-                // console.log(res);
-                // this.status == 'close';
-                // location.reload();
-              });
-            }
-          },
-          {
-            text: data.calls.buttons[0],
-            cssClass: 'greenCall',
-            handler: () => {
-              if(this.api.callAlert !== null) {
-                this.api.callAlert.dismiss();
+                                // console.log(res);
+                                // this.status == 'close';
+                                // location.reload();
+                            });
+                        }
+                    },
+                    {
+                        text: data.calls.buttons[0],
+                        cssClass: 'greenCall',
+                        handler: () => {
+                            if (this.api.callAlert !== null) {
+                                this.api.callAlert.dismiss();
+                                this.api.callAlert = null;
+                            }
+                            // this.webRTC.partnerId = param.id;
+                            // this.webRTC.chatId = param.chatId;
+                            // this.nav.push(VideoChatPage, param);
+                            console.log('open');
+                            this.api.callAlertShow = false;
+
+                            this.api.openVideoChat(param);
+                        }
+                    }
+                ]
+            });
+
+
+            await this.api.callAlert.present();
+            this.api.callAlert.onWillDismiss(() => {
+                this.api.callAlertShow = false;
                 this.api.callAlert = null;
-              }
-              // this.webRTC.partnerId = param.id;
-              // this.webRTC.chatId = param.chatId;
-              // this.nav.push(VideoChatPage, param);
-              console.log('open');
-              this.api.callAlertShow = false;
-
-              this.api.openVideoChat(param);
-            }
-          }
-        ]
-      });
-
-
-      await this.api.callAlert.present();
-      this.api.callAlert.onWillDismiss(() => {
-        this.api.callAlertShow = false;
-        this.api.callAlert = null;
-        this.api.stopAudio();
-        console.log('dismiss');
-      });
+                this.api.stopAudio();
+                console.log('dismiss');
+            });
+        }
     }
-  }
 
     dialogPage() {
         let user = {id: this.new_message.userId};
@@ -877,29 +911,29 @@ export class MyApp {
     }
 
     checkStatus() {
-      if(this.api.pageName != 'ContactUsPage' && this.api.pageName != 'RegisterPage' && this.api.pageName != 'PagePage'&& this.api.pageName != 'TermsPage' && this.api.pageName != 'PasswordRecoveryPage') {
-        if (this.api.status == 'toPay' && this.api.pageName != 'SubscriptionPage') {
-          this.nav.setRoot(SubscriptionPage);
-          this.nav.popToRoot();
-        } else if (this.api.status == 'login' && this.api.pageName == 'SubscriptionPage' && this.api.userIsPaying == 1) {
-          this.nav.setRoot(HomePage);
-          this.nav.popToRoot();
-        } else if (this.api.pageName != 'ActivationPage' && this.api.status == 'not_activated' && this.api.pageName != 'ChangePhotosPage') {
-          this.nav.push(ActivationPage);
-          // }else if (this.api.status == 'not_activated' && this.api.pageName != 'LoginPage' && this.api.pageName != 'ContactUsPage' && this.api.pageName != 'PasswordRecoveryPage'
-          //   && this.api.pageName != 'ChangePhotosPage' && this.api.pageName != 'RegisterPage' && this.api.pageName != 'TermsPage' && this.api.pageName != 'ActivationPage') {
-          //     this.nav.push(LoginPage,{'redirect': 1});
-        } else if (this.api.status == '' && this.api.pageName != 'LoginPage' && this.api.pageName != 'ContactUsPage' && this.api.pageName != 'RegisterPage' && this.api.pageName != 'TermsPage' && this.api.pageName != 'PasswordRecoveryPage') {
-          this.nav.setRoot(LoginPage);
-          this.nav.popToRoot();
-        } else if (this.api.pageName == 'LoginPage' && this.status == 'login') {
-          this.nav.push(HomePage);
+        if (this.api.pageName != 'ContactUsPage' && this.api.pageName != 'RegisterPage' && this.api.pageName != 'PagePage' && this.api.pageName != 'TermsPage' && this.api.pageName != 'PasswordRecoveryPage') {
+            if (this.api.status == 'toPay' && this.api.pageName != 'SubscriptionPage') {
+                this.nav.setRoot(SubscriptionPage);
+                this.nav.popToRoot();
+            } else if (this.api.status == 'login' && this.api.pageName == 'SubscriptionPage' && this.api.userIsPaying == 1) {
+                this.nav.setRoot(HomePage);
+                this.nav.popToRoot();
+            } else if (this.api.pageName != 'ActivationPage' && this.api.status == 'not_activated' && this.api.pageName != 'ChangePhotosPage') {
+                this.nav.push(ActivationPage);
+                // }else if (this.api.status == 'not_activated' && this.api.pageName != 'LoginPage' && this.api.pageName != 'ContactUsPage' && this.api.pageName != 'PasswordRecoveryPage'
+                //   && this.api.pageName != 'ChangePhotosPage' && this.api.pageName != 'RegisterPage' && this.api.pageName != 'TermsPage' && this.api.pageName != 'ActivationPage') {
+                //     this.nav.push(LoginPage,{'redirect': 1});
+            } else if (this.api.status == '' && this.api.pageName != 'LoginPage' && this.api.pageName != 'ContactUsPage' && this.api.pageName != 'RegisterPage' && this.api.pageName != 'TermsPage' && this.api.pageName != 'PasswordRecoveryPage') {
+                this.nav.setRoot(LoginPage);
+                this.nav.popToRoot();
+            } else if (this.api.pageName == 'LoginPage' && this.status == 'login') {
+                this.nav.push(HomePage);
+            }
         }
-      }
-      if (this.api.pageName == 'ActivationPage' && this.api.status == 'login') {
-        this.nav.push(HomePage);
-        this.api.hideLoad();
-      }
+        if (this.api.pageName == 'ActivationPage' && this.api.status == 'login') {
+            this.nav.push(HomePage);
+            this.api.hideLoad();
+        }
     }
 
     ngAfterViewInit() {
@@ -910,24 +944,23 @@ export class MyApp {
             let that = this;
             clearInterval(this.ajaxInterval);
             setTimeout(function () {
-              that.getStatistics();
-              that.getBingo();
-            },300);
+                that.getStatistics();
+                that.getBingo();
+            }, 300);
 
             this.ajaxInterval = setInterval(function () {
-              if (that.api.password != false && that.api.password != null) {
-                that.getBingo();
-                // New Message Notification
-                //that.getMessage();
-                that.getStatistics();
-              }
+                if (that.api.password != false && that.api.password != null) {
+                    that.getBingo();
+                    // New Message Notification
+                    //that.getMessage();
+                    that.getStatistics();
+                }
             }, 10000);
 
             this.events.subscribe('statistics:updated', () => {
                 // user and time are the same arguments passed in `events.publish(user, time)`
                 this.getStatistics();
             });
-
 
 
             if (this.api.pageName == 'DialogPage') {
@@ -995,10 +1028,10 @@ export class MyApp {
                     this.is_login = false;
                 } else {
                     this.getStatistics();
-                    if(val.status == 'not_activated'){
+                    if (val.status == 'not_activated') {
                         this.menu_items = this.menu_items_logout;
                         this.is_login = false;
-                    }else {
+                    } else {
                         this.is_login = true;
                         this.menu_items = this.menu_items_login;
                     }
