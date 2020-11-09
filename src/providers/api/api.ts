@@ -66,9 +66,9 @@ export class ApiProvider {
         public modalCtrl: ModalController,
         public iab: InAppBrowser
     ) {
-        this.url = 'http://localhost:8100';
+        // this.url = 'http://localhost:8100';
         //this.url = 'http://10.0.0.7:8100';
-        //this.url = 'https://m.zigzug.co.il/api/v2';
+        this.url = 'https://m.zigzug.co.il/api/v2';
         //this.url = '/api/v2';
         //this.testingMode = true;
     }

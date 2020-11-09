@@ -108,7 +108,11 @@ export class MyApp {
 
           this.api.storage.get('user_data').then((val) => {
               if (!val) {
-                  this.rootPage = LoginPage;
+                  if(this.api.pageName == 'RegisterPage'){
+                    this.rootPage = RegisterPage;
+                  }else {
+                    this.rootPage = LoginPage;
+                  }
                   this.menu_items = this.menu_items_logout;
               } else {
                   this.api.password = val.password;
